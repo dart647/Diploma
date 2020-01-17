@@ -62,18 +62,6 @@ namespace JournalForSecurity.Controllers
             return RedirectToAction("Login", "Account");
         }
 
-        //private async Task Authenticate(User user)
-        //{
-        //    var claims = new List<Claim>()
-        //    {
-        //        new Claim(ClaimsIdentity.DefaultNameClaimType, user.Email),
-        //        new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role?.Name.ToString())
-        //    };
-
-        //    ClaimsIdentity id = new ClaimsIdentity(claims, "AppCookies", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
-        //    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
-        //}
-
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

@@ -2,7 +2,6 @@
 
 @{
     ViewData["Title"] = "Index";
-    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
 <h1>Index</h1>
@@ -26,17 +25,11 @@
                 @Html.DisplayNameFor(model => model.Email)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Password)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Birthday)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.PhoneNumber)
             </th>
-            @*<th>
-                @Html.DisplayNameFor(model => model.Role)
-            </th>*@
             <th></th>
         </tr>
     </thead>
@@ -56,21 +49,20 @@
                 @Html.DisplayFor(modelItem => item.Email)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Password)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.Birthday)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.PhoneNumber)
             </td>
-            @*<td>
-                @Html.DisplayFor(modelItem => item.RoleId)
-            </td>*@
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <button class="btn btn-outline-info" type="button" data-toggle="collapse" data-target=@String.Format("#ParamsButtons{0}", item.UserName) aria-expanded="false" aria-controls=@String.Format("ParamsButtons{0}", item.UserName)>
+                    Настройки
+                </button>
+                <div class="collapse" id=@String.Format("ParamsButtons{0}", item.UserName)>
+                    <a class="btn btn-lg" asp-action="Edit" asp-route-id="@item.Id">Edit</a> 
+                    <a class="btn btn-lg" asp-action="Details" asp-route-id="@item.Id">Details</a> 
+                    <a class="btn btn-lg" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </div>
             </td>
         </tr>
 }

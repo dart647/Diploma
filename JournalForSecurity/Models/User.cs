@@ -13,10 +13,7 @@ namespace JournalForSecurity.Models
         public string FirstName { get; set; }
         public string SecondName { get; set; }
         public string ThirdName { get; set; }
-        public string Password { get; set; }
         public DateTime Birthday { get; set; }
-        //public string RoleId { get; set; }
-        //public IdentityRole Role { get; set; }
 
     }
 }

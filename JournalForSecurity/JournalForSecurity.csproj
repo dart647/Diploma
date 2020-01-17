@@ -12,11 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20200116210150_DbSet1.cs" />
-    <Compile Remove="Migrations\20200116210150_DbSet1.Designer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="Controllers\AccountController.cs~RF532b2fe2.TMP" />
   </ItemGroup>
 

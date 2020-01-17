@@ -43,7 +43,6 @@ namespace JournalForSecurity.Migrations
                     FirstName = table.Column<string>(nullable: true),
                     SecondName = table.Column<string>(nullable: true),
                     ThirdName = table.Column<string>(nullable: true),
-                    Password = table.Column<string>(nullable: true),
                     Birthday = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>

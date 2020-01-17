@@ -29,7 +29,6 @@ namespace JournalForSecurity.Controllers
 
         public IActionResult Index()
         {
-            
             return View(UserManager.Users);
         }
 
