@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Journal>
+﻿@model JournalForSecurity.ViewModels.SecJournalModel
 @{
     ViewData["Title"] = "Security";
 }
@@ -11,29 +11,29 @@
                 Отдел
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.DateBegin)
+                Дата начала
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.DateEnd)
+                Дата конца
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.RealDate)
+                Реальное время
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Status)
+                Статус
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Desc)
+                Описание
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in Model.Journals)
         {
             <tr>
                 <td>
-                    @ViewData["DepartmentName"]
+                    @ViewBag.DepartmentName
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.DateBegin)
@@ -45,10 +45,33 @@
                     @Html.DisplayFor(modelItem => item.RealDate)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Status)
+                    @{
+                        if (item.Status)
+                        {
+                            <p>Выполнено</p>
+                        }
+                        else if(item.DateEnd > DateTime.Now)
+                        {
+                            <p>Ожидание/Выполнение</p>
+                        }
+                        else
+                        {
+                            <p>Не выполнено</p>
+                        }
+                    }
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Desc)
+                </td>
+                <td>
+                    @{ if (!item.Status && DateTime.Now < item.DateEnd && DateTime.Now > item.DateBegin)
+                        {
+                            <form asp-action="RoundSubmit">
+                                <input type="submit" class="btn btn-warning" value="Выполнено" />
+                                <input type="hidden" asp-for="JournalStrId" value="@item.Id" />
+                            </form>
+                        }
+                    }
                 </td>
             </tr>
         }

@@ -7,8 +7,6 @@ namespace JournalForSecurity.Models
 {
     public class JournalRow
     {
-        public int Id { get; set; }
-
         public Department Department { get; set; }
         public int? DepartmentId { get; set; }
 

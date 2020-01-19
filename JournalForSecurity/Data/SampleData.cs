@@ -36,6 +36,44 @@ namespace JournalForSecurity.Data
                     dbContext.Departments.Add(new Department() { Name = item });
                 }
             }
+            if (!dbContext.Journals.Any())
+            {
+                foreach (var item in dbContext.Departments.ToList())
+                {
+                    for (int i = 0; i < 5; i++)
+                    {
+                        Journal journal = new Journal()
+                        {
+                            DateBegin = new DateTime(2020, 1, 20, 8 + i * 2, 0, 0),
+                            DateEnd = new DateTime(2020, 1, 20, 9 + i * 2, 0, 0)
+                        };
+                        dbContext.Journals.Add(journal);
+
+                        dbContext.SaveChanges();
+
+                        journal.JournalRows.Add(new JournalRow() { DepartmentId = item.Id, JournalId = journal.Id });
+
+                        dbContext.SaveChanges();
+                    }
+                }
+            }
+            if (!dbContext.CardTasks.Any())
+            {
+                foreach (var journal in dbContext.Journals.ToList())
+                {
+                    CardTask card = new CardTask()
+                    {
+                        DateBegin = journal.DateBegin,
+                        DateEnd = journal.DateEnd,
+                        Name = "Задача " + journal.DateBegin,
+                        State = false,
+                        UserId = dbContext.Users.FirstOrDefault(u => u.UserName == "hod").Id
+                    };
+                    dbContext.CardTasks.Add(card);
+
+                    dbContext.SaveChanges();
+                }
+            }
             dbContext.SaveChanges();
         }
     }

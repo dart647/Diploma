@@ -20,16 +20,28 @@ namespace JournalForSecurity.Controllers
     {
         readonly UserManager<User> UserManager;
         readonly SignInManager<User> SignInManager;
+        readonly AppDbContext dbContext;
 
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager)
+        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, AppDbContext dbContext)
         {
             UserManager = userManager;
             SignInManager = signInManager;
+            this.dbContext = dbContext;
         }
 
         [HttpGet]
-        public IActionResult Login()
+        public async Task<IActionResult> Login()
         {
+            SelectList selectItem = new SelectList( 
+                await dbContext.Departments
+                .Select(d=>d.Name)
+                //.Include(u=>u.Users)
+                //.Include(ce=>ce.CardEvents)
+                //.Include(ct=>ct.CardTasks)
+                //.Include(cr=>cr.CardRequests)
+                .ToListAsync()
+                );
+            ViewBag.Departments = selectItem;
             return View();
         }
 
@@ -42,7 +54,10 @@ namespace JournalForSecurity.Controllers
                 var result = await SignInManager.PasswordSignInAsync(model.Login, model.Password, false, false);
                 if (result.Succeeded)
                 {
-                    IEnumerable<string> roles = await UserManager.GetRolesAsync(await UserManager.FindByNameAsync(model.Login));
+                    var user = await UserManager.FindByNameAsync(model.Login);
+                    user.Department = await dbContext.Departments.FirstOrDefaultAsync(d=>d.Name.Equals(model.Department));
+                    await dbContext.SaveChangesAsync();
+                    IEnumerable<string> roles = await UserManager.GetRolesAsync(user);
                     return RedirectToAction("Index", roles.FirstOrDefault());
                 }
                 else
@@ -54,6 +69,8 @@ namespace JournalForSecurity.Controllers
             {
                 ModelState.AddModelError("", "Некорректные логин и(или) пароль");
             }
+            SelectList selectItem = new SelectList(await dbContext.Departments.ToListAsync());
+            ViewBag.Departments = selectItem;
             return View(model);
         }     
 

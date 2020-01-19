@@ -1,0 +1,86 @@
+﻿@model JournalForSecurity.ViewModels.SecTaskModel
+
+@{
+    ViewData["Title"] = "Tasks";
+}
+
+<h1>Tasks</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Название
+            </th>
+            <th>
+                Описание
+            </th>
+            <th>
+                Время начала
+            </th>
+            <th>
+                Время конца
+            </th>
+            <th>
+                Состояние
+            </th>
+            <th>
+                ФИО
+            </th>
+            <th>
+                Отдел
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.cardTasks) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Desc)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateBegin)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateEnd)
+            </td>
+            <td>
+                @{
+                    if (item.State)
+                    {
+                        <p>Выполнено</p>
+                    }
+                    else if (item.DateEnd > DateTime.Now)
+                    {
+                        <p>Ожидание/Выполнение</p>
+                    }
+                    else
+                    {
+                        <p>Не выполнено</p>
+                    }
+                }
+            </td>
+            <td>
+                @String.Format("{0} {1} {2}", item.User.FirstName, item.User.SecondName, item.User.ThirdName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Department.Name)
+            </td>
+            <td>
+                @{ if (!item.State && DateTime.Now < item.DateEnd && DateTime.Now > item.DateBegin)
+                    {
+                        <form asp-action="TaskSubmit">
+                            <input type="submit" class="btn btn-warning" value="Выполнено" />
+                            <input type="hidden" asp-for="CardTaskId" value="@item.Id" />
+                        </form>
+                    }
+                }
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
