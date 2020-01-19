@@ -20,7 +20,7 @@ namespace JournalForSecurity.ViewModels
         public string ThirdName { get; set; }
 
         [Required(ErrorMessage = "Не указан Email")]
-        [DataType(DataType.EmailAddress)]
+        [EmailAddress]
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Не указана Дата рождения")]

@@ -4,14 +4,16 @@ using JournalForSecurity.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace JournalForSecurity.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200118233702_DbSet3")]
+    partial class DbSet3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -137,10 +139,15 @@ namespace JournalForSecurity.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int?>("JournalId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("JournalId");
 
                     b.ToTable("Departments");
                 });
@@ -170,28 +177,6 @@ namespace JournalForSecurity.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Journals");
-                });
-
-            modelBuilder.Entity("JournalForSecurity.Models.JournalRow", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("DepartmentId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("JournalId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DepartmentId");
-
-                    b.HasIndex("JournalId");
-
-                    b.ToTable("JournalRow");
                 });
 
             modelBuilder.Entity("JournalForSecurity.Models.User", b =>
@@ -440,14 +425,10 @@ namespace JournalForSecurity.Migrations
                         .HasForeignKey("UserId1");
                 });
 
-            modelBuilder.Entity("JournalForSecurity.Models.JournalRow", b =>
+            modelBuilder.Entity("JournalForSecurity.Models.Department", b =>
                 {
-                    b.HasOne("JournalForSecurity.Models.Department", "Department")
-                        .WithMany("JournalRows")
-                        .HasForeignKey("DepartmentId");
-
                     b.HasOne("JournalForSecurity.Models.Journal", "Journal")
-                        .WithMany("JournalRows")
+                        .WithMany("Departments")
                         .HasForeignKey("JournalId");
                 });
 

@@ -20,6 +20,22 @@ namespace JournalForSecurity.Data
                     new IdentityRole("HeadOfOrganisation") { NormalizedName = "HEADOFORGANISATION" }
                     );
             }
+            if (!dbContext.Departments.Any())
+            {
+                List<string> departments = new List<string>()
+                {
+                    "Главное здание",
+                    "Территория Октябрьского поля",
+                    "Общежитие 1",
+                    "Общежитие 2",
+                    "Общежитие 3",
+                    "Общежитие 4"
+                };
+                foreach (var item in departments)
+                {
+                    dbContext.Departments.Add(new Department() { Name = item });
+                }
+            }
             dbContext.SaveChanges();
         }
     }

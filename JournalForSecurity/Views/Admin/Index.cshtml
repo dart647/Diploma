@@ -34,37 +34,38 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SecondName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ThirdName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Birthday)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PhoneNumber)
-            </td>
-            <td>
-                <button class="btn btn-outline-info" type="button" data-toggle="collapse" data-target=@String.Format("#ParamsButtons{0}", item.UserName) aria-expanded="false" aria-controls=@String.Format("ParamsButtons{0}", item.UserName)>
-                    Настройки
-                </button>
-                <div class="collapse" id=@String.Format("ParamsButtons{0}", item.UserName)>
-                    <a class="btn btn-lg" asp-action="Edit" asp-route-id="@item.Id">Edit</a> 
-                    <a class="btn btn-lg" asp-action="Details" asp-route-id="@item.Id">Details</a> 
-                    <a class="btn btn-lg" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </div>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SecondName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ThirdName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Birthday)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PhoneNumber)
+                </td>
+                <td>
+                    <button class="btn btn-outline-info" type="button" data-toggle="collapse" data-target=@String.Format("#ParamsButtons{0}", item.UserName) aria-expanded="false" aria-controls=@String.Format("ParamsButtons{0}", item.UserName)>
+                        Настройки
+                    </button>
+                    <div class="collapse" id=@String.Format("ParamsButtons{0}", item.UserName)>
+                        <a class="btn" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                        <a class="btn" asp-action="Details" asp-route-id="@item.Id">Details</a>
+                        <a class="btn" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </div>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

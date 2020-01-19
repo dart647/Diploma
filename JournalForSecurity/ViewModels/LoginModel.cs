@@ -8,7 +8,7 @@ namespace JournalForSecurity.ViewModels
 {
     public class LoginModel
     {
-        [Required(ErrorMessage = "Не указан Email")]
+        [Required(ErrorMessage = "Не указан Логин")]
         public string Login { get; set; }
 
         [Required(ErrorMessage = "Не указан пароль")]

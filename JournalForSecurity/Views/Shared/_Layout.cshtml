@@ -11,13 +11,64 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Account" asp-action="Login">Журнал обхода территории</a>
+                <a class="navbar-brand">Журнал обхода территории</a>
                 @{
                     if (User.Identity.IsAuthenticated)
                     {
-                        <form class="justify-content-end" asp-controller="Account" asp-action="Logout">
-                            <input type="submit" class="btn btn-danger" value="Выход">
-                        </form>
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#CollapseSup" aria-expanded="false" aria-controls="#CollapseSup">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="CollapseSup">
+                            <ul class="navbar-nav mr-auto">
+                                @{
+                                    if (User.IsInRole("Security"))
+                                    {
+                                        <li class="nav-item">
+                                            <a class="nav-link" asp-action="Index" asp-controller="Security">Журнал</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" asp-action="Index" asp-controller="Security">Задачи</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" asp-action="Index" asp-controller="Security">События</a>
+                                        </li>
+                                    }
+                                    if (User.IsInRole("HeadOfDepartment"))
+                                    {
+                                        <li class="nav-item">
+                                            <a class="nav-link" asp-action="Index" asp-controller="HeadOfDepartment">Журнал</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" asp-action="Index" asp-controller="HeadOfDepartment">Задачи</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" asp-action="Index" asp-controller="HeadOfDepartment">События</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" asp-action="Index" asp-controller="HeadOfDepartment">Запросы</a>
+                                        </li>
+                                    }
+                                    if (User.IsInRole("HeadOfOrganisation"))
+                                    {
+                                        <li class="nav-item">
+                                            <a class="nav-link" asp-action="Index" asp-controller="HeadOfOrganisation">Отчеты</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" asp-action="Index" asp-controller="HeadOfOrganisation">Задачи</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" asp-action="Index" asp-controller="HeadOfOrganisation">События</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" asp-action="Index" asp-controller="HeadOfOrganisation">Запросы</a>
+                                        </li>
+                                    }
+                                }
+                            </ul>
+                            <form class="justify-content-end" asp-controller="Account" asp-action="Logout">
+                                <input type="submit" class="btn btn-danger" value="Выход">
+                            </form>                           
+                        </div>
                     }
                 }
             </div>

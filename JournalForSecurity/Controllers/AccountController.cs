@@ -45,6 +45,10 @@ namespace JournalForSecurity.Controllers
                     IEnumerable<string> roles = await UserManager.GetRolesAsync(await UserManager.FindByNameAsync(model.Login));
                     return RedirectToAction("Index", roles.FirstOrDefault());
                 }
+                else
+                {
+                    ModelState.AddModelError("", "Логин и(или) пароль введены не верно");
+                }
             }
             else
             {
