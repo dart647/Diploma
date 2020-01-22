@@ -27,6 +27,7 @@ namespace JournalForSecurity.Models
         public List<CardEvent> CardEvents { get; set; }
 
         public List<CardTask> CardTasks { get; set; }
+        public List<ExplanatoryNote> ExplanatoryNotes { get; set; }
 
         public Department Department { get; set; }
         public int? DepartmentId { get; set; }
@@ -36,6 +37,7 @@ namespace JournalForSecurity.Models
             CardEvents = new List<CardEvent>();
             CardRequests = new List<CardRequest>();
             CardTasks = new List<CardTask>();
+            ExplanatoryNotes = new List<ExplanatoryNote>();
         }
     }
 }

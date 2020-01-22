@@ -1,7 +1,119 @@
-﻿
+﻿@model JournalForSecurity.ViewModels.SecJournalModel
 @{
-    ViewData["Title"] = "HeadOfDepartment";
+    ViewData["Title"] = "HOD";
 }
 
-    <h1>HeadOfDepartment</h1>
+<h1>HOD</h1>
+<div>
+    <a class="btn" asp-action="CreateTask">Создать задачу</a>
+    <a class="btn" asp-action="CreateRound">Создать обходы на день</a>
+</div>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>
+                Отдел
+            </th>
+            <th>
+                Дата начала
+            </th>
+            <th>
+                Дата конца
+            </th>
+            <th>
+                Реальное время
+            </th>
+            <th>
+                Статус
+            </th>
+            <th>
+                Описание
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Journals)
+        {
+            <tr>
+                <td>
+                    @ViewBag.DepartmentName
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateBegin)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateEnd)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RealDate)
+                </td>
+                <td>
+                    @{
+                        if (item.Status)
+                        {
+                            <p>Выполнено</p>
+                        }
+                        else if (item.DateEnd > DateTime.Now)
+                        {
+                            <p>Ожидание/Выполнение</p>
+                        }
+                        else if (item.Desc != null)
+                        {
+                            <p>Написана объяснительная</p>
+                        }
+                        else
+                        {
+                            <p>Не выполнено</p>
+                        }
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Desc.TaskName)
+                </td>
+                <td>
+                    @{
+                        if (item.Desc != null)
+                        {
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#expalationNote">
+                                Просмотреть объяснения
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="expalationNote" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Пояснительная записка</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="form-group">
+                                                <label class="control-label" for="userFio">От:</label>
+                                                <p id="userFio">@String.Format($"{item.Desc.User.SecondName} {item.Desc.User.FirstName} {item.Desc.User.ThirdName}")</p>
+                                            </div>
+                                            <div class="form-group">
+                                                <label asp-for="TaskName"></label>
+                                                <p>@item.Desc.TaskName</p>
+                                            </div>
+                                            <div class="form-group">
+                                                <label asp-for="Explanation" class="control-label"></label>
+                                                <p class="form-control border">@item.Desc.Explanation</p>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
 

@@ -22,8 +22,8 @@ namespace JournalForSecurity.Models
         [Display(Name = "Статус")]
         public bool Status { get; set; }
 
-        [Display(Name = "Описание")]
-        public string Desc { get; set; }
+        [Display(Name = "Объяснительная")]
+        public ExplanatoryNote Desc { get; set; }
 
         [Display(Name = "Отдел")]
         public List<JournalRow> JournalRows { get; set; }

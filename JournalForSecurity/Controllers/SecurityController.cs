@@ -28,13 +28,18 @@ namespace JournalForSecurity.Controllers
                 .Include(u => u.Department)
                 .ThenInclude(j => j.JournalRows)
                 .ThenInclude(jr => jr.Journal)
+                .ThenInclude(en => en.Desc)
                 .FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
 
             ViewBag.DepartmentName = user.Department.Name;
+            ViewBag.UserFIO = String.Format($"{user.SecondName} {user.FirstName} {user.ThirdName}");
 
             SecJournalModel model = new SecJournalModel()
             {
-                Journals = user.Department.JournalRows.Select(d => d.Journal).ToList()
+                Journals = user.Department.JournalRows
+                .Select(d => d.Journal)
+                .Where(d => d.DateBegin.Date.Equals(DateTime.Now.Date))
+                .ToList()
             };
 
             return View(model);
@@ -45,12 +50,42 @@ namespace JournalForSecurity.Controllers
         {
             var str = await dbContext.Journals.FirstOrDefaultAsync(c => c.Id == model.JournalStrId);
             str.Status = true;
+            str.RealDate = DateTime.Now;
 
             dbContext.SaveChanges();
 
             return View(model);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> WriteExplanatoryNoteAsync(SecJournalModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var str = await dbContext.Journals.Include(n => n.Desc).FirstOrDefaultAsync(c => c.Id == model.JournalStrId);
+
+                ExplanatoryNote note = new ExplanatoryNote()
+                {
+                    Explanation = model.Explanation,
+                    TaskName = model.TaskName,
+                    UserId = dbContext.Users.FirstOrDefault(u => u.UserName.Equals(User.Identity.Name)).Id,
+                    Date = DateTime.Now
+                };
+
+                await dbContext.AddAsync(note);
+                await dbContext.SaveChangesAsync();
+
+                str.Desc = note;
+                await dbContext.SaveChangesAsync();
+
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                ModelState.AddModelError("", "Не удалось создать объяснительную");
+            }
+            return RedirectToAction("Index");
+        }
 
         public async Task<IActionResult> Tasks()
         {
@@ -59,9 +94,9 @@ namespace JournalForSecurity.Controllers
                 .FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
 
             var tasks = await dbContext.CardTasks
-                .Include(u=>u.User)
+                .Include(u => u.User)
                 .Include(d => d.Department)
-                .Where(c=>c.Department == user.Department)
+                .Where(c => c.Department == user.Department)
                 .ToListAsync();
 
             var model = new SecTaskModel()
@@ -75,7 +110,7 @@ namespace JournalForSecurity.Controllers
         [HttpPost]
         public async Task<IActionResult> Tasks(SecTaskModel model)
         {
-            var card = await dbContext.CardTasks.FirstOrDefaultAsync(c=>c.Id == model.CardTaskId);
+            var card = await dbContext.CardTasks.FirstOrDefaultAsync(c => c.Id == model.CardTaskId);
             card.State = true;
 
             dbContext.SaveChanges();

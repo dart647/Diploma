@@ -13,6 +13,7 @@ using System.Security.Claims;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Identity;
+using JournalForSecurity.Service;
 
 namespace JournalForSecurity.Controllers
 {
@@ -21,27 +22,20 @@ namespace JournalForSecurity.Controllers
         readonly UserManager<User> UserManager;
         readonly SignInManager<User> SignInManager;
         readonly AppDbContext dbContext;
+        readonly DepartmentService departmentService;
 
         public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, AppDbContext dbContext)
         {
             UserManager = userManager;
             SignInManager = signInManager;
             this.dbContext = dbContext;
+            this.departmentService = new DepartmentService(this.dbContext);
         }
 
         [HttpGet]
         public async Task<IActionResult> Login()
         {
-            SelectList selectItem = new SelectList( 
-                await dbContext.Departments
-                .Select(d=>d.Name)
-                //.Include(u=>u.Users)
-                //.Include(ce=>ce.CardEvents)
-                //.Include(ct=>ct.CardTasks)
-                //.Include(cr=>cr.CardRequests)
-                .ToListAsync()
-                );
-            ViewBag.Departments = selectItem;
+            ViewBag.Departments = await departmentService.GetDepartmentsNamesToSelectListAsync();
             return View();
         }
 
@@ -56,7 +50,9 @@ namespace JournalForSecurity.Controllers
                 {
                     var user = await UserManager.FindByNameAsync(model.Login);
                     user.Department = await dbContext.Departments.FirstOrDefaultAsync(d=>d.Name.Equals(model.Department));
+
                     await dbContext.SaveChangesAsync();
+
                     IEnumerable<string> roles = await UserManager.GetRolesAsync(user);
                     return RedirectToAction("Index", roles.FirstOrDefault());
                 }
@@ -69,7 +65,7 @@ namespace JournalForSecurity.Controllers
             {
                 ModelState.AddModelError("", "Некорректные логин и(или) пароль");
             }
-            SelectList selectItem = new SelectList(await dbContext.Departments.ToListAsync());
+            SelectList selectItem = await departmentService.GetDepartmentsNamesToSelectListAsync();
             ViewBag.Departments = selectItem;
             return View(model);
         }     

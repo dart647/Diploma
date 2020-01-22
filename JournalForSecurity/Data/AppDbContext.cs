@@ -16,6 +16,7 @@ namespace JournalForSecurity.Data
         public DbSet<CardEvent> CardEvents { get; set; }
         public DbSet<Journal> Journals { get; set; }
         public DbSet<Department> Departments { get; set; }
+        public DbSet<ExplanatoryNote> ExplanatoryNotes { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {

@@ -29,51 +29,99 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model.Journals)
-        {
-            <tr>
-                <td>
-                    @ViewBag.DepartmentName
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DateBegin)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DateEnd)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.RealDate)
-                </td>
-                <td>
-                    @{
-                        if (item.Status)
-                        {
-                            <p>Выполнено</p>
+        @{ 
+            foreach (var item in Model.Journals)
+            {
+                <tr>
+                    <td>
+                        @ViewBag.DepartmentName
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DateBegin)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DateEnd)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.RealDate)
+                    </td>
+                    <td>
+                        @{
+                            if (item.Status)
+                            {
+                                <p>Выполнено</p>
+                            }
+                            else if (item.DateEnd > DateTime.Now)
+                            {
+                                <p>Ожидание/Выполнение</p>
+                            }
+                            else if (item.Desc != null)
+                            {
+                                <p>Написана объяснительная</p>
+                            }
+                            else
+                            {
+                                <p>Не выполнено</p>
+                            }
                         }
-                        else if(item.DateEnd > DateTime.Now)
-                        {
-                            <p>Ожидание/Выполнение</p>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Desc.TaskName)
+                    </td>
+                    <td>
+                        @{
+                            if (!item.Status && DateTime.Now < item.DateEnd && DateTime.Now > item.DateBegin)
+                            {
+                                <form asp-action="Index">
+                                    <input type="submit" class="btn btn-warning" value="Выполнено" />
+                                    <input type="hidden" asp-for="JournalStrId" value="@item.Id" />
+                                </form>
+                            }
+                            if (!item.Status && DateTime.Now > item.DateEnd && item.Desc == null)
+                            {
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#expalationNote">
+                                    Написать объяснительную
+                                </button>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="expalationNote" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Пояснительная записка</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <form asp-action="WriteExplanatoryNote">
+                                                <div class="modal-body">
+                                                    <div class="form-group">
+                                                        <label class="control-label" for="userFio">От:</label>
+                                                        <input id="userFio" type="text" value="@ViewBag.UserFIO" readonly />
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label asp-for="TaskName">От:</label>
+                                                        <input asp-for="TaskName" value="@String.Format($"Обход {item.DateBegin.ToShortDateString()} c {item.DateBegin.TimeOfDay} по {item.DateEnd.TimeOfDay}")" readonly />
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label asp-for="Explanation" class="control-label"></label>
+                                                        <textarea rows="5" asp-for="Explanation"  class="form-control"></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                                                    <input type="submit" class="btn btn-primary" value="Отправить" />
+                                                    <input type="hidden" asp-for="JournalStrId" value="@item.Id" />
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
                         }
-                        else
-                        {
-                            <p>Не выполнено</p>
-                        }
-                    }
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Desc)
-                </td>
-                <td>
-                    @{ if (!item.Status && DateTime.Now < item.DateEnd && DateTime.Now > item.DateBegin)
-                        {
-                            <form asp-action="RoundSubmit">
-                                <input type="submit" class="btn btn-warning" value="Выполнено" />
-                                <input type="hidden" asp-for="JournalStrId" value="@item.Id" />
-                            </form>
-                        }
-                    }
-                </td>
-            </tr>
+                    </td>
+                </tr>
+            }
         }
     </tbody>
 </table>
