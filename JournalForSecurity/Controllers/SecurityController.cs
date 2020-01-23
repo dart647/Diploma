@@ -26,18 +26,15 @@ namespace JournalForSecurity.Controllers
         {
             var user = await dbContext.Users
                 .Include(u => u.Department)
-                .ThenInclude(j => j.JournalRows)
                 .ThenInclude(jr => jr.Journal)
                 .ThenInclude(en => en.Desc)
                 .FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
 
-            ViewBag.DepartmentName = user.Department.Name;
             ViewBag.UserFIO = String.Format($"{user.SecondName} {user.FirstName} {user.ThirdName}");
 
             SecJournalModel model = new SecJournalModel()
             {
-                Journals = user.Department.JournalRows
-                .Select(d => d.Journal)
+                Journals = user.Department.Journal
                 .Where(d => d.DateBegin.Date.Equals(DateTime.Now.Date))
                 .ToList()
             };

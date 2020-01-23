@@ -45,13 +45,10 @@ namespace JournalForSecurity.Data
                         Journal journal = new Journal()
                         {
                             DateBegin = new DateTime(2020, 1, 20, 8 + i * 2, 0, 0),
-                            DateEnd = new DateTime(2020, 1, 20, 9 + i * 2, 0, 0)
+                            DateEnd = new DateTime(2020, 1, 20, 9 + i * 2, 0, 0),
+                            DepartmentId = item.Id
                         };
                         dbContext.Journals.Add(journal);
-
-                        dbContext.SaveChanges();
-
-                        journal.JournalRows.Add(new JournalRow() { DepartmentId = item.Id, JournalId = journal.Id });
 
                         dbContext.SaveChanges();
                     }

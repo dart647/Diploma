@@ -19,12 +19,12 @@ namespace JournalForSecurity.Models
         public List<CardTask> CardTasks { get; set; }
 
         [Display(Name = "Журнал")]
-        public List<JournalRow> JournalRows { get; set; }
+        public List<Journal> Journal { get; set; }
 
         public Department()
         {
             Users = new List<User>();
-            JournalRows = new List<JournalRow>();
+            Journal = new List<Journal>();
             CardTasks = new List<CardTask>();
             CardRequests = new List<CardRequest>();
             CardEvents = new List<CardEvent>();

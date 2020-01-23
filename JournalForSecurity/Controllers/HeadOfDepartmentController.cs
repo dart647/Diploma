@@ -28,17 +28,14 @@ namespace JournalForSecurity.Controllers
         {
             var user = await dbContext.Users
                 .Include(u => u.Department)
-                .ThenInclude(j => j.JournalRows)
                 .ThenInclude(jr => jr.Journal)
                 .ThenInclude(en=>en.Desc)
                 .ThenInclude(u=>u.User)
                 .FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
 
-            ViewBag.DepartmentName = user.Department.Name;
-
             SecJournalModel model = new SecJournalModel()
             {
-                Journals = user.Department.JournalRows.Select(d => d.Journal).Where(d=>d.DateBegin.Date.Equals(DateTime.Now.Date)).ToList()
+                Journals = user.Department.Journal.Where(d=>d.DateBegin.Date.Equals(DateTime.Now.Date)).ToList()
             };
 
             return View(model);
@@ -81,7 +78,8 @@ namespace JournalForSecurity.Controllers
 
         public async Task<IActionResult> CreateRoundAsync()
         {
-            ViewBag.Departments = await departmentService.GetDepartmentsNamesToSelectListAsync();
+            User user = await dbContext.Users.Include(u => u.Department).FirstOrDefaultAsync(u => u.UserName.Equals(User.Identity.Name));
+            ViewBag.Department = user.Department.Name;
             return View();
         }
 
@@ -90,7 +88,7 @@ namespace JournalForSecurity.Controllers
         {
             if (ModelState.IsValid)
             {
-                int betweenRounds = model.DayEnd.Subtract(model.DayBegin).Hours / model.RoundCount;
+                double betweenRounds = (double) model.DayEnd.Subtract(model.DayBegin).Hours / model.RoundCount;
                 int timeToRound = 1;
                 Department department = await dbContext.Departments.FirstOrDefaultAsync(d => d.Name.Equals(model.Department));
 
@@ -100,13 +98,11 @@ namespace JournalForSecurity.Controllers
                     {
                         DateBegin = DateSetter.SetToday().AddHours(model.DayBegin.AddHours(betweenRounds * i).Hour),
                         DateEnd = DateSetter.SetToday().AddHours(model.DayBegin.AddHours(timeToRound + betweenRounds * i).Hour),
+                        DepartmentId = department.Id,
                         Status = false
                     };
 
                     await dbContext.Journals.AddAsync(journalStr);
-                    dbContext.SaveChanges();
-
-                    journalStr.JournalRows.Add(new JournalRow() { JournalId = journalStr.Id, DepartmentId = department.Id });
                     dbContext.SaveChanges();
                 }
                 return RedirectToAction("Index");
