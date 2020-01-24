@@ -26,11 +26,7 @@ namespace JournalForSecurity.Models
         public ExplanatoryNote Desc { get; set; }
 
         [Display(Name = "Отдел")]
-        public List<JournalRow> JournalRows { get; set; }
-
-        public Journal()
-        {
-            JournalRows = new List<JournalRow>();
-        }
+        public Department Department { get; set; }
+        public int? DepartmentId { get; set; }
     }
 }
