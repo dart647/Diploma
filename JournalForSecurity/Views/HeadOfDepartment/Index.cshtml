@@ -92,11 +92,11 @@
                                         <div class="modal-body">
                                             <div class="form-group">
                                                 <label class="control-label" for="userFio">От:</label>
-                                                <p id="userFio">@String.Format($"{item.Desc.User.SecondName} {item.Desc.User.FirstName} {item.Desc.User.ThirdName}")</p>
+                                                <p class="form-control" id="userFio">@String.Format($"{item.Desc.User.SecondName} {item.Desc.User.FirstName} {item.Desc.User.ThirdName}")</p>
                                             </div>
                                             <div class="form-group">
                                                 <label asp-for="TaskName"></label>
-                                                <p>@item.Desc.TaskName</p>
+                                                <p class="form-control">@item.Desc.TaskName</p>
                                             </div>
                                             <div class="form-group">
                                                 <label asp-for="Explanation" class="control-label"></label>

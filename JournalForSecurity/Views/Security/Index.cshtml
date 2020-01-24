@@ -97,15 +97,15 @@
                                                 <div class="modal-body">
                                                     <div class="form-group">
                                                         <label class="control-label" for="userFio">От:</label>
-                                                        <input id="userFio" type="text" value="@ViewBag.UserFIO" readonly />
+                                                        <input class="form-control" id="userFio" type="text" value="@ViewBag.UserFIO" readonly />
                                                     </div>
                                                     <div class="form-group">
-                                                        <label asp-for="TaskName">От:</label>
-                                                        <input asp-for="TaskName" value="@String.Format($"Обход {item.DateBegin.ToShortDateString()} c {item.DateBegin.TimeOfDay} по {item.DateEnd.TimeOfDay}")" readonly />
+                                                        <label asp-for="TaskName"></label>
+                                                        <input asp-for="TaskName" class="form-control" value="@String.Format($"Обход {item.DateBegin.ToShortDateString()} c {item.DateBegin.TimeOfDay} по {item.DateEnd.TimeOfDay}")" readonly />
                                                     </div>
                                                     <div class="form-group">
                                                         <label asp-for="Explanation" class="control-label"></label>
-                                                        <textarea rows="5" asp-for="Explanation"  class="form-control"></textarea>
+                                                        <textarea rows="5" asp-for="Explanation" class="form-control"></textarea>
                                                     </div>
                                                 </div>
                                                 <div class="modal-footer">
