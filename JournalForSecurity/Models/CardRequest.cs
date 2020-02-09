@@ -11,6 +11,7 @@ namespace JournalForSecurity.Models
         public int Id { get; set; }
 
         [Display(Name = "Название")]
+        [Required(ErrorMessage = "Не введено название")]
         public string Name { get; set; }
 
         [Display(Name = "Описание")]
