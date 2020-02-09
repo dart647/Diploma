@@ -1,9 +1,9 @@
 ﻿@model JournalForSecurity.ViewModels.SecJournalModel
 @{
-    ViewData["Title"] = "HOD";
+    ViewData["Title"] = "Начальник охраны";
 }
 
-<h1>HOD</h1>
+<h1>Панель начальника охраны</h1>
 <div>
     <a class="btn" asp-action="CreateTask">Создать задачу</a>
     <a class="btn" asp-action="CreateRound">Создать обходы на день</a>
@@ -35,84 +35,87 @@
     <tbody>
         @foreach (var item in Model.Journals)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Department.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DateBegin)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DateEnd)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.RealDate)
-                </td>
-                <td>
-                    @{
-                        if (item.Status)
-                        {
-                            <p>Выполнено</p>
-                        }
-                        else if (item.DateEnd > DateTime.Now)
-                        {
-                            <p>Ожидание/Выполнение</p>
-                        }
-                        else if (item.Desc != null)
-                        {
-                            <p>Написана объяснительная</p>
-                        }
-                        else
-                        {
-                            <p>Не выполнено</p>
-                        }
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Department.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateBegin)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateEnd)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RealDate)
+            </td>
+            <td>
+                @{
+                    if (item.Status)
+                    {
+                        <p>Выполнено</p>
                     }
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Desc.TaskName)
-                </td>
-                <td>
-                    @{
-                        if (item.Desc != null)
-                        {
-                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#expalationNote">
-                                Просмотреть объяснения
-                            </button>
+                    else if (item.DateEnd > DateTime.Now)
+                    {
+                        <p>Ожидание/Выполнение</p>
+                    }
+                    else if (item.Desc != null)
+                    {
+                        <p>Написана объяснительная</p>
+                    }
+                    else
+                    {
+                        <p>Не выполнено</p>
+                    }
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Comment)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Desc.TaskName)
+            </td>
+            <td>
+                @{
+                    if (item.Desc != null)
+                    {
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#expalationNote">
+                            Просмотреть объяснения
+                        </button>
 
-                            <!-- Modal -->
-                            <div class="modal fade" id="expalationNote" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">Пояснительная записка</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
+                        <!-- Modal -->
+                        <div class="modal fade" id="expalationNote" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Пояснительная записка</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="form-group">
+                                            <label class="control-label" for="userFio">От:</label>
+                                            <p class="form-control" id="userFio">@String.Format($"{item.Desc.User.SecondName} {item.Desc.User.FirstName} {item.Desc.User.ThirdName}")</p>
                                         </div>
-                                        <div class="modal-body">
-                                            <div class="form-group">
-                                                <label class="control-label" for="userFio">От:</label>
-                                                <p class="form-control" id="userFio">@String.Format($"{item.Desc.User.SecondName} {item.Desc.User.FirstName} {item.Desc.User.ThirdName}")</p>
-                                            </div>
-                                            <div class="form-group">
-                                                <label asp-for="TaskName"></label>
-                                                <p class="form-control">@item.Desc.TaskName</p>
-                                            </div>
-                                            <div class="form-group">
-                                                <label asp-for="Explanation" class="control-label"></label>
-                                                <p class="form-control border">@item.Desc.Explanation</p>
-                                            </div>
+                                        <div class="form-group">
+                                            <label asp-for="TaskName"></label>
+                                            <p class="form-control">@item.Desc.TaskName</p>
                                         </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                                        <div class="form-group">
+                                            <label asp-for="Explanation" class="control-label"></label>
+                                            <textarea class="form-control border" readonly>@item.Desc.Explanation</textarea>
                                         </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
                                     </div>
                                 </div>
                             </div>
-                        }
+                        </div>
                     }
-                </td>
-            </tr>
+                }
+            </td>
+        </tr>
         }
     </tbody>
 </table>

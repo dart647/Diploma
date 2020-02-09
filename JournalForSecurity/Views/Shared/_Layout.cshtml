@@ -30,7 +30,7 @@
                                             <a class="nav-link" asp-action="Tasks" asp-controller="Security">Задачи</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" asp-action="Index" asp-controller="Security">События</a>
+                                            <a class="nav-link" asp-action="Events" asp-controller="Security">События</a>
                                         </li>
                                     }
                                     if (User.IsInRole("HeadOfDepartment"))
@@ -39,13 +39,13 @@
                                             <a class="nav-link" asp-action="Index" asp-controller="HeadOfDepartment">Журнал</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" asp-action="Index" asp-controller="HeadOfDepartment">Задачи</a>
+                                            <a class="nav-link" asp-action="Tasks" asp-controller="HeadOfDepartment">Задачи</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" asp-action="Index" asp-controller="HeadOfDepartment">События</a>
+                                            <a class="nav-link" asp-action="Events" asp-controller="HeadOfDepartment">События</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" asp-action="Index" asp-controller="HeadOfDepartment">Запросы</a>
+                                            <a class="nav-link" asp-action="Requests" asp-controller="HeadOfDepartment">Запросы</a>
                                         </li>
                                     }
                                     if (User.IsInRole("HeadOfOrganisation"))
@@ -54,13 +54,7 @@
                                             <a class="nav-link" asp-action="Index" asp-controller="HeadOfOrganisation">Отчеты</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" asp-action="Index" asp-controller="HeadOfOrganisation">Задачи</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" asp-action="Index" asp-controller="HeadOfOrganisation">События</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" asp-action="Index" asp-controller="HeadOfOrganisation">Запросы</a>
+                                            <a class="nav-link" asp-action="Events" asp-controller="HeadOfOrganisation">События</a>
                                         </li>
                                     }
                                 }

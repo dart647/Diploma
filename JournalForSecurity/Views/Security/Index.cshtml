@@ -1,9 +1,9 @@
 ﻿@model JournalForSecurity.ViewModels.SecJournalModel
 @{
-    ViewData["Title"] = "Security";
+    ViewData["Title"] = "Охрана";
 }
 
-<h1>Security</h1>
+<h1>Журнал</h1>
 <table class="table table-striped">
     <thead>
         <tr>
@@ -64,6 +64,9 @@
                                 <p>Не выполнено</p>
                             }
                         }
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Comment)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Desc.TaskName)

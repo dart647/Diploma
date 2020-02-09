@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JournalForSecurity.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20200119200930_DbSet6")]
-    partial class DbSet6
+    [Migration("20200209132525_DbSet10")]
+    partial class DbSet10
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -138,6 +138,32 @@ namespace JournalForSecurity.Migrations
                     b.ToTable("Departments");
                 });
 
+            modelBuilder.Entity("JournalForSecurity.Models.ExplanatoryNote", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Explanation")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TaskName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ExplanatoryNotes");
+                });
+
             modelBuilder.Entity("JournalForSecurity.Models.Journal", b =>
                 {
                     b.Property<int>("Id")
@@ -145,14 +171,20 @@ namespace JournalForSecurity.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("DateBegin")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("DateEnd")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Desc")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("DepartmentId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("DescId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("RealDate")
                         .HasColumnType("datetime2");
@@ -162,22 +194,11 @@ namespace JournalForSecurity.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Journals");
-                });
-
-            modelBuilder.Entity("JournalForSecurity.Models.JournalRow", b =>
-                {
-                    b.Property<int?>("JournalId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("DepartmentId")
-                        .HasColumnType("int");
-
-                    b.HasKey("JournalId", "DepartmentId");
-
                     b.HasIndex("DepartmentId");
 
-                    b.ToTable("JournalRow");
+                    b.HasIndex("DescId");
+
+                    b.ToTable("Journals");
                 });
 
             modelBuilder.Entity("JournalForSecurity.Models.User", b =>
@@ -426,19 +447,22 @@ namespace JournalForSecurity.Migrations
                         .HasForeignKey("UserId");
                 });
 
-            modelBuilder.Entity("JournalForSecurity.Models.JournalRow", b =>
+            modelBuilder.Entity("JournalForSecurity.Models.ExplanatoryNote", b =>
+                {
+                    b.HasOne("JournalForSecurity.Models.User", "User")
+                        .WithMany("ExplanatoryNotes")
+                        .HasForeignKey("UserId");
+                });
+
+            modelBuilder.Entity("JournalForSecurity.Models.Journal", b =>
                 {
                     b.HasOne("JournalForSecurity.Models.Department", "Department")
-                        .WithMany("JournalRows")
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("Journal")
+                        .HasForeignKey("DepartmentId");
 
-                    b.HasOne("JournalForSecurity.Models.Journal", "Journal")
-                        .WithMany("JournalRows")
-                        .HasForeignKey("JournalId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("JournalForSecurity.Models.ExplanatoryNote", "Desc")
+                        .WithMany()
+                        .HasForeignKey("DescId");
                 });
 
             modelBuilder.Entity("JournalForSecurity.Models.User", b =>

@@ -61,14 +61,36 @@ namespace JournalForSecurity.Controllers
             return View(model);
         }
 
-        public IActionResult Events()
+        public async Task<IActionResult> EventsAsync()
         {
-            return View();
+            List<CardEvent> items = new List<CardEvent>();
+            var user = await dbContext.Users
+                .Include(u => u.Department)
+                .FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
+
+            items = await dbContext.CardEvents
+                .Include(d => d.Department)
+                .Include(u => u.User)
+                .Where(c => c.Department == user.Department)
+                .ToListAsync();
+
+            return View(items);
         }
 
-        public IActionResult Requests()
+        public async Task<IActionResult> RequestsAsync()
         {
-            return View();
+            List<CardRequest> items = new List<CardRequest>();
+            var user = await dbContext.Users
+                .Include(u => u.Department)
+                .FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
+
+            items = await dbContext.CardRequests
+                .Include(d => d.Department)
+                .Include(u => u.User)
+                .Where(c => c.Department == user.Department)
+                .ToListAsync();
+
+            return View(items);
         }
 
         public IActionResult CreateTask()
@@ -81,6 +103,46 @@ namespace JournalForSecurity.Controllers
             User user = await dbContext.Users.Include(u => u.Department).FirstOrDefaultAsync(u => u.UserName.Equals(User.Identity.Name));
             ViewBag.Department = user.Department.Name;
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateTaskAsync(CardTask task)
+        {
+            if (ModelState.IsValid)
+            {
+                User user = await dbContext.Users.Include(u => u.Department).FirstOrDefaultAsync(u => u.UserName.Equals(User.Identity.Name));
+
+                CardTask newCard = new CardTask()
+                {
+                    DateBegin = task.DateBegin,
+                    DateEnd = task.DateEnd,
+                    Department = user.Department,
+                    Desc = task.Desc,
+                    Name = task.Name,
+                    State = false,
+                    User = user
+                };
+
+                await dbContext.CardTasks.AddAsync(newCard);
+                dbContext.SaveChanges();
+
+                return RedirectToAction("Tasks");
+            }
+            else
+            {
+                ModelState.AddModelError("", "Ошибка ввода данных");
+            }
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditCommentAsync(String comment)
+        {
+            if(!String.IsNullOrWhiteSpace(comment) || !String.IsNullOrEmpty(comment))
+            {
+                //ДОДЕЛАТЬ
+            }
+            return RedirectToAction("Index");
         }
 
         [HttpPost]

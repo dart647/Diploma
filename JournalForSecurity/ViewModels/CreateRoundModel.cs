@@ -24,6 +24,9 @@ namespace JournalForSecurity.ViewModels
         [DataType(DataType.Time)]
         public DateTime DayEnd { get; set; }
 
+        [Display(Name = "Комментарий на обход")]
+        public string Comment { get; set; }
+
         [Display(Name = "Отдел")]
         [Required(ErrorMessage = "Не указан отдел")]
         public string Department { get; set; }

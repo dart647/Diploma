@@ -1,16 +1,22 @@
 ﻿@model JournalForSecurity.ViewModels.SecTaskModel
 
 @{
-    ViewData["Title"] = "Tasks";
+    ViewData["Title"] = "Задачи";
 }
 
-<h1>Tasks</h1>
+<h1>Задачи</h1>
 
 <table class="table">
     <thead>
         <tr>
             <th>
-                Название
+                ФИО
+            </th>
+            <th>
+                Отдел
+            </th>
+            <th>
+                Наименование
             </th>
             <th>
                 Описание
@@ -24,18 +30,18 @@
             <th>
                 Состояние
             </th>
-            <th>
-                ФИО
-            </th>
-            <th>
-                Отдел
-            </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model.cardTasks) {
         <tr>
+            <td>
+                @String.Format("{0} {1} {2}", item.User.FirstName, item.User.SecondName, item.User.ThirdName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Department.Name)
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
@@ -61,22 +67,6 @@
                     else
                     {
                         <p>Не выполнено</p>
-                    }
-                }
-            </td>
-            <td>
-                @String.Format("{0} {1} {2}", item.User.FirstName, item.User.SecondName, item.User.ThirdName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Department.Name)
-            </td>
-            <td>
-                @{ if (!item.State && DateTime.Now < item.DateEnd && DateTime.Now > item.DateBegin)
-                    {
-                        <form asp-action="Tasks">
-                            <input type="submit" class="btn btn-warning" value="Выполнено" />
-                            <input type="hidden" asp-for="CardTaskId" value="@item.Id" />
-                        </form>
                     }
                 }
             </td>

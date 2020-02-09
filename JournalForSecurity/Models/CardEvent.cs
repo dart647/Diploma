@@ -26,6 +26,7 @@ namespace JournalForSecurity.Models
         public User User { get; set; }
         public string UserId { get; set; }
 
+        [Display(Name = "Отделение")]
         public Department Department { get; set; }
         public int? DepartmentId { get; set; }
     }

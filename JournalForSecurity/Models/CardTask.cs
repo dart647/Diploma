@@ -11,15 +11,19 @@ namespace JournalForSecurity.Models
         public int Id { get; set; }
 
         [Display(Name = "Название")]
+        [Required]
         public string Name { get; set; }
 
         [Display(Name = "Описание")]
+        [Required]
         public string Desc { get; set; }
 
         [Display(Name = "Время начала")]
+        [Required]
         public DateTime DateBegin { get; set; }
 
         [Display(Name = "Время конца")]
+        [Required]
         public DateTime DateEnd { get; set; }
 
         [Display(Name = "Статус")]

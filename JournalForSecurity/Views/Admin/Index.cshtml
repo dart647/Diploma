@@ -1,13 +1,13 @@
 ﻿@model IEnumerable<User>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Панель админа";
 }
 
-<h1>Index</h1>
+    <h1>Панель админинстратора</h1>
 
 <p>
-    <a asp-action="Register">Create New</a>
+    <a asp-action="Register">Создать нового пользователя</a>
 </p>
 <table class="table table-striped">
     <thead>
@@ -60,9 +60,8 @@
                         Настройки
                     </button>
                     <div class="collapse" id=@String.Format("ParamsButtons{0}", item.UserName)>
-                        <a class="btn" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                        <a class="btn" asp-action="Details" asp-route-id="@item.Id">Details</a>
-                        <a class="btn" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        <a class="btn" asp-action="Edit" asp-route-id="@item.Id">Редактировать</a>
+                        <a class="btn" asp-action="Delete" asp-route-id="@item.Id">Удалить</a>
                     </div>
                 </td>
             </tr>

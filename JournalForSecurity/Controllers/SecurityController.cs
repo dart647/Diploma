@@ -42,6 +42,42 @@ namespace JournalForSecurity.Controllers
             return View(model);
         }
 
+        public async Task<IActionResult> Tasks()
+        {
+            var user = await dbContext.Users
+                .Include(u => u.Department)
+                .FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
+
+            var tasks = await dbContext.CardTasks
+                .Include(u => u.User)
+                .Include(d => d.Department)
+                .Where(c => c.Department == user.Department)
+                .ToListAsync();
+
+            var model = new SecTaskModel()
+            {
+                cardTasks = tasks
+            };
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> EventsAsync()
+        {
+            List<CardEvent> items = new List<CardEvent>();
+            var user = await dbContext.Users
+                .Include(u => u.Department)
+                .FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
+
+            items = await dbContext.CardEvents
+                .Include(d => d.Department)
+                .Include(u => u.User)
+                .Where(c => c.Department == user.Department)
+                .ToListAsync();
+
+            return View(items);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Index(SecJournalModel model)
         {
@@ -84,40 +120,15 @@ namespace JournalForSecurity.Controllers
             return RedirectToAction("Index");
         }
 
-        public async Task<IActionResult> Tasks()
-        {
-            var user = await dbContext.Users
-                .Include(u => u.Department)
-                .FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
-
-            var tasks = await dbContext.CardTasks
-                .Include(u => u.User)
-                .Include(d => d.Department)
-                .Where(c => c.Department == user.Department)
-                .ToListAsync();
-
-            var model = new SecTaskModel()
-            {
-                cardTasks = tasks
-            };
-
-            return View(model);
-        }
-
         [HttpPost]
         public async Task<IActionResult> Tasks(SecTaskModel model)
         {
             var card = await dbContext.CardTasks.FirstOrDefaultAsync(c => c.Id == model.CardTaskId);
             card.State = true;
-
+    
             dbContext.SaveChanges();
 
             return View(model);
-        }
-
-        public IActionResult Events()
-        {
-            return View();
         }
 
     }
