@@ -11,7 +11,14 @@ namespace JournalForSecurity.Models
         public string TaskName { get; set; }
         public string Explanation { get; set; }
         public DateTime Date { get; set; }
+        //public ENTaskType TaskType { get; set; } В разработке
         public User User { get; set; }
         public string UserId { get; set; }
+    }
+
+    public enum ENTaskType
+    {
+        Task,
+        JournalStr
     }
 }

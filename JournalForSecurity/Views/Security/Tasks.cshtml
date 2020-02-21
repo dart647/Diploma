@@ -5,6 +5,7 @@
 }
 
 <h1>Задачи</h1>
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
 <table class="table">
     <thead>
@@ -13,7 +14,16 @@
                 Название
             </th>
             <th>
+                ФИО
+            </th>
+            <th>
+                Отдел
+            </th>
+            <th>
                 Описание
+            </th>
+            <th>
+                Ответ
             </th>
             <th>
                 Время начала
@@ -24,63 +34,148 @@
             <th>
                 Состояние
             </th>
-            <th>
-                ФИО
-            </th>
-            <th>
-                Отдел
-            </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.cardTasks) {
-        <tr>
-            <td>
-                @String.Format("{0} {1} {2}", item.User.FirstName, item.User.SecondName, item.User.ThirdName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Department.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Desc)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateBegin)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateEnd)
-            </td>
-            <td>
-                @{
-                    if (item.State)
-                    {
-                        <p>Выполнено</p>
+        @foreach (var item in Model.cardTasks)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @String.Format("{0} {1} {2}", item.User.FirstName, item.User.SecondName, item.User.ThirdName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Department.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Desc)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Answer)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateBegin)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateEnd)
+                </td>
+                <td>
+                    @{
+                        if (item.State)
+                        {
+                            <p>Выполнено</p>
+                        }
+                        else if (item.DateEnd > DateTime.Now)
+                        {
+                            <p>Ожидание/Выполнение</p>
+                        }
+                        else if (item.Explanation != null)
+                        {
+                            <p>Написана объянительная</p>
+                        }
+                        else
+                        {
+                            <p>Не выполнено</p>
+                        }
                     }
-                    else if (item.DateEnd > DateTime.Now)
-                    {
-                        <p>Ожидание/Выполнение</p>
+                </td>
+                <td>
+                    @{ if (!item.State && DateTime.Now < item.DateEnd && DateTime.Now > item.DateBegin)
+                        {
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#done-@item.Id">
+                                Выполнено
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="done-@item.Id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Выполнение</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <form asp-action="Tasks">                                    
+                                            <div class="modal-body">
+                                                <div class="form-group">
+                                                    <label class="control-label" for="userFio">От:</label>
+                                                    <input class="form-control" id="userFio" type="text" value="@ViewBag.UserFIO" readonly />
+                                                </div>
+                                                <div class="form-group">
+                                                    <label asp-for="@item.Name"></label>
+                                                    <input class="form-control" value="@item.Name" readonly />
+                                                </div>
+                                                <div class="form-group">
+                                                    <label asp-for="Answer" class="control-label"></label>
+                                                    <textarea rows="5" asp-for="Answer" class="form-control"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                                                <input type="submit" class="btn btn-primary" value="Отправить" />
+                                                <input type="hidden" asp-for="CardTaskId" value="@item.Id" />
+                                            </div>
+                                            <input type="hidden" asp-for="Explanation" value="0"/>
+                                            <input type="hidden" asp-for="cardTasks" value="@Model.cardTasks" />
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        if(!item.State && DateTime.Now > item.DateEnd && item.Explanation == null)
+                        {
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#expalationNote-@item.Id">
+                                Написать объяснительную
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="expalationNote-@item.Id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Пояснительная записка</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <form asp-action="WriteExplanatoryNoteToTask">
+                                            <div class="modal-body">
+                                                <div class="form-group">
+                                                    <label class="control-label" for="userFio">От:</label>
+                                                    <input class="form-control" id="userFio" type="text" value="@ViewBag.UserFIO" readonly />
+                                                </div>
+                                                <div class="form-group">
+                                                    <label asp-for="TaskName"></label>
+                                                    <input asp-for="TaskName" class="form-control" value="@item.Name" readonly />
+                                                </div>
+                                                <div class="form-group">
+                                                    <label asp-for="Explanation" class="control-label"></label>
+                                                    <textarea rows="5" asp-for="Explanation" class="form-control"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                                                <input type="submit" class="btn btn-primary" value="Отправить" />
+                                                <input type="hidden" asp-for="CardTaskId" value="@item.Id" />
+                                            </div>
+                                            <input type="hidden" asp-for="Answer" value="0" />
+                                            <input type="hidden" asp-for="cardTasks" value="@Model.cardTasks" />
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        }
                     }
-                    else
-                    {
-                        <p>Не выполнено</p>
-                    }
-                }
-            </td>
-            <td>
-                @{ if (!item.State && DateTime.Now < item.DateEnd && DateTime.Now > item.DateBegin)
-                    {
-                        <form asp-action="Tasks">
-                            <input type="submit" class="btn btn-warning" value="Выполнено" />
-                            <input type="hidden" asp-for="CardTaskId" value="@item.Id" />
-                        </form>
-                    }
-                }
-            </td>
-        </tr>
-}
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

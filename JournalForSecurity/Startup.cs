@@ -79,6 +79,10 @@ namespace JournalForSecurity
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Account}/{action=Login}");
+
+                endpoints.MapControllerRoute(
+                    name: "reports",
+                    pattern: "{controller=HeadOfOrganisation}/{action=Index}/{mode?}");
             });
         }
     }

@@ -1,0 +1,57 @@
+﻿@model StatisticModel
+@{
+    ViewData["Title"] = "Статистика";
+}
+
+<h1 class="text-md-center">Статистика</h1>
+
+<h2 class="text-md-center">Обходы</h2>
+
+<p class="text-md-center text-info">
+    Всего обходов: @Model.JournalStrCount
+</p>
+<p class="text-md-center text-info">
+    Выполненые обходы: @Model.JournalStrSuccessCount
+</p>
+<p class="text-md-center text-info">
+    Невыполненные обходы: @Model.JournalStrUnsuccessCount
+</p>
+<p class="text-md-center text-info">
+    Написано объяснительных: @Model.JournalStrUnsuccessCount
+</p>
+<p class="text-md-center text-info">
+    Соотношение выполненных обходов обходов: @Model.JournalStrPercent%
+</p>
+
+<h2 class="text-md-center">Задачи</h2>
+
+<p class="text-md-center text-info">
+    Всего задач: @Model.TasksCount
+</p>
+<p class="text-md-center text-info">
+    Выполненные задачи: @Model.TasksSuccessCount
+</p>
+<p class="text-md-center text-info">
+    Невыполненные задачи: @Model.TasksUnsuccessCount
+</p>
+<p class="text-md-center text-info">
+    Написано объяснительных: @Model.TasksExplanationCount
+</p>
+<p class="text-md-center text-info">
+    Соотношение выполненных обходов задач: @Model.TasksPercent%
+</p>
+
+<h2 class="text-md-center">События</h2>
+
+<p class="text-md-center text-info">
+    Всего событий: @Model.EventsCount
+</p>
+
+<h2 class="text-md-center">Статистика по территориям</h2>
+
+@foreach (var item in Model.GuiltyDepartments)
+{
+    <p class="text-md-center text-info">
+        @item.Key.Name не выполнено обходов: @item.Value
+    </p>
+}

@@ -4,14 +4,16 @@ using JournalForSecurity.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace JournalForSecurity.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200221154747_DbSet12")]
+    partial class DbSet12
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -110,9 +112,6 @@ namespace JournalForSecurity.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ExplanationId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -126,8 +125,6 @@ namespace JournalForSecurity.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("DepartmentId");
-
-                    b.HasIndex("ExplanationId");
 
                     b.HasIndex("UserId");
 
@@ -194,7 +191,7 @@ namespace JournalForSecurity.Migrations
                     b.Property<int?>("DepartmentId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ExplanationId")
+                    b.Property<int?>("DescId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("RealDate")
@@ -207,7 +204,7 @@ namespace JournalForSecurity.Migrations
 
                     b.HasIndex("DepartmentId");
 
-                    b.HasIndex("ExplanationId");
+                    b.HasIndex("DescId");
 
                     b.ToTable("Journals");
                 });
@@ -453,10 +450,6 @@ namespace JournalForSecurity.Migrations
                         .WithMany("CardTasks")
                         .HasForeignKey("DepartmentId");
 
-                    b.HasOne("JournalForSecurity.Models.ExplanatoryNote", "Explanation")
-                        .WithMany()
-                        .HasForeignKey("ExplanationId");
-
                     b.HasOne("JournalForSecurity.Models.User", "User")
                         .WithMany("CardTasks")
                         .HasForeignKey("UserId");
@@ -475,9 +468,9 @@ namespace JournalForSecurity.Migrations
                         .WithMany("Journal")
                         .HasForeignKey("DepartmentId");
 
-                    b.HasOne("JournalForSecurity.Models.ExplanatoryNote", "Explanation")
+                    b.HasOne("JournalForSecurity.Models.ExplanatoryNote", "Desc")
                         .WithMany()
-                        .HasForeignKey("ExplanationId");
+                        .HasForeignKey("DescId");
                 });
 
             modelBuilder.Entity("JournalForSecurity.Models.User", b =>

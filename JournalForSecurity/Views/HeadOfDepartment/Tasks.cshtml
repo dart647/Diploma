@@ -10,16 +10,19 @@
     <thead>
         <tr>
             <th>
+                Наименование
+            </th>
+            <th>
                 ФИО
             </th>
             <th>
                 Отдел
             </th>
             <th>
-                Наименование
+                Описание
             </th>
             <th>
-                Описание
+                Ответ
             </th>
             <th>
                 Время начала
@@ -34,43 +37,92 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.cardTasks) {
-        <tr>
-            <td>
-                @String.Format("{0} {1} {2}", item.User.FirstName, item.User.SecondName, item.User.ThirdName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Department.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Desc)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateBegin)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateEnd)
-            </td>
-            <td>
-                @{
-                    if (item.State)
-                    {
-                        <p>Выполнено</p>
+        @foreach (var item in Model.cardTasks)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @String.Format("{0} {1} {2}", item.User.FirstName, item.User.SecondName, item.User.ThirdName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Department.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Desc)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Answer)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateBegin)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateEnd)
+                </td>
+                <td>
+                    @{
+                        if (item.State)
+                        {
+                            <p>Выполнено</p>
+                        }
+                        else if (item.DateEnd > DateTime.Now)
+                        {
+                            <p>Ожидание/Выполнение</p>
+                        }
+                        else if (item.Explanation != null)
+                        {
+                            <p>Написана объянительная</p>
+                        }
+                        else
+                        {
+                            <p>Не выполнено</p>
+                        }
                     }
-                    else if (item.DateEnd > DateTime.Now)
-                    {
-                        <p>Ожидание/Выполнение</p>
+                </td>
+                <td>
+                    @{
+                        if (item.Explanation != null)
+                        {
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#expalationNote-@item.Id">
+                                Просмотреть объяснение
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="expalationNote-@item.Id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Пояснительная записка</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="form-group">
+                                                <label class="control-label" for="userFio">От:</label>
+                                                <p class="form-control" id="userFio">@String.Format($"{item.Explanation.User.SecondName} {item.Explanation.User.FirstName} {item.Explanation.User.ThirdName}")</p>
+                                            </div>
+                                            <div class="form-group">
+                                                <label asp-for="TaskName"></label>
+                                                <p class="form-control">@item.Explanation.TaskName</p>
+                                            </div>
+                                            <div class="form-group">
+                                                <label asp-for="Explanation" class="control-label"></label>
+                                                <textarea class="form-control border" readonly>@item.Explanation.Explanation</textarea>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
                     }
-                    else
-                    {
-                        <p>Не выполнено</p>
-                    }
-                }
-            </td>
-        </tr>
-}
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

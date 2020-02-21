@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using JournalForSecurity.Data;
 using JournalForSecurity.Models;
+using JournalForSecurity.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -21,9 +22,11 @@ namespace JournalForSecurity.Controllers
             this.dbContext = dbContext;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string mode)
         {
-            return View();
+            var model = new ReportModel(dbContext, mode);
+
+            return View(model);
         }
 
         public async Task<IActionResult> EventsAsync()
@@ -42,6 +45,12 @@ namespace JournalForSecurity.Controllers
         {
             ViewBag.departments = new SelectList(await dbContext.Departments.Select(d => d.Name).ToListAsync());
             return View();
+        }
+
+        public IActionResult Statistic()
+        {
+            var model = new StatisticModel(dbContext);
+            return View(model);
         }
 
         [HttpPost]

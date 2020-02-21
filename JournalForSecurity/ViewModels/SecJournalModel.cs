@@ -21,6 +21,11 @@ namespace JournalForSecurity.ViewModels
         [Display(Name = "Наименование задачи")]
         public string TaskName { get; set; }
 
+        [Required]
+        [Display(Name ="Комментарий")]
+        [DataType(DataType.MultilineText)]
+        public string Comment { get; set; }
+
         public SecJournalModel()
         {
             Journals = new List<Journal>();

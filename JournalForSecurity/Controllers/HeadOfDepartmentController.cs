@@ -29,7 +29,7 @@ namespace JournalForSecurity.Controllers
             var user = await dbContext.Users
                 .Include(u => u.Department)
                 .ThenInclude(jr => jr.Journal)
-                .ThenInclude(en=>en.Desc)
+                .ThenInclude(en=>en.Explanation)
                 .ThenInclude(u=>u.User)
                 .FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
 
@@ -50,6 +50,8 @@ namespace JournalForSecurity.Controllers
             var tasks = await dbContext.CardTasks
                 .Include(u => u.User)
                 .Include(d => d.Department)
+                .Include(e=>e.Explanation)
+                .ThenInclude(u=>u.User)
                 .Where(c => c.Department == user.Department)
                 .ToListAsync();
 
@@ -135,15 +137,15 @@ namespace JournalForSecurity.Controllers
             return View();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> EditCommentAsync(String comment)
-        {
-            if(!String.IsNullOrWhiteSpace(comment) || !String.IsNullOrEmpty(comment))
-            {
-                //ДОДЕЛАТЬ
-            }
-            return RedirectToAction("Index");
-        }
+        //[HttpPost]
+        //public async Task<IActionResult> EditCommentAsync(String comment)
+        //{
+        //    if(!String.IsNullOrWhiteSpace(comment) || !String.IsNullOrEmpty(comment))
+        //    {
+        //        //ДОДЕЛАТЬ
+        //    }
+        //    return RedirectToAction("Index");
+        //}
 
         [HttpPost]
         public async Task<IActionResult> CreateRoundAsync(CreateRoundModel model)

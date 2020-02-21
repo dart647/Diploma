@@ -23,10 +23,10 @@ namespace JournalForSecurity.Models
         public bool Status { get; set; }
 
         [Display(Name = "Комментарий")]
-        public String Comment { get; set; }
+        public string Comment { get; set; }
 
         [Display(Name = "Объяснительная")]
-        public ExplanatoryNote Desc { get; set; }
+        public ExplanatoryNote Explanation { get; set; }
 
         [Display(Name = "Отдел")]
         public Department Department { get; set; }

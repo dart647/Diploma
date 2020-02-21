@@ -18,6 +18,12 @@ namespace JournalForSecurity.Models
         [Required(ErrorMessage = "Не введено описание")]
         public string Desc { get; set; }
 
+        [Display(Name="Ответ исполнителя")]
+        public string Answer { get; set; }
+
+        [Display(Name="Объяснительная")]
+        public ExplanatoryNote Explanation { get; set; }
+
         [Display(Name = "Время начала")]
         [Required(ErrorMessage = "Не введено время начала")]
         public DateTime DateBegin { get; set; }

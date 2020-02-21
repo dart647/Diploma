@@ -4,6 +4,8 @@
 }
 
 <h1>Журнал</h1>
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
 <table class="table table-striped">
     <thead>
         <tr>
@@ -25,11 +27,14 @@
             <th>
                 Описание
             </th>
+            <th>
+                Объяснительная
+            </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @{ 
+        @{
             foreach (var item in Model.Journals)
             {
                 <tr>
@@ -55,7 +60,7 @@
                             {
                                 <p>Ожидание/Выполнение</p>
                             }
-                            else if (item.Desc != null)
+                            else if (item.Explanation != null)
                             {
                                 <p>Написана объяснительная</p>
                             }
@@ -69,25 +74,61 @@
                         @Html.DisplayFor(modelItem => item.Comment)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Desc.TaskName)
+                        @Html.DisplayFor(modelItem => item.Explanation.TaskName)
                     </td>
                     <td>
                         @{
                             if (!item.Status && DateTime.Now < item.DateEnd && DateTime.Now > item.DateBegin)
                             {
-                                <form asp-action="Index">
-                                    <input type="submit" class="btn btn-warning" value="Выполнено" />
-                                    <input type="hidden" asp-for="JournalStrId" value="@item.Id" />
-                                </form>
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#done-@item.Id">
+                                    Выполнено
+                                </button>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="#done-@item.Id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Выполнение</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <form asp-action="Index">
+                                                <div class="modal-body">
+                                                    <div class="form-group">
+                                                        <label class="control-label" for="userFio">От:</label>
+                                                        <input class="form-control" id="userFio" type="text" value="@ViewBag.UserFIO" readonly />
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label asp-for="TaskName"></label>
+                                                        <input class="form-control" value="@String.Format($"Обход {item.DateBegin.ToShortDateString()} c {item.DateBegin.TimeOfDay} по {item.DateEnd.TimeOfDay}")" readonly />
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label asp-for="Comment" class="control-label"></label>
+                                                        <textarea rows="5" asp-for="Comment" class="form-control"></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                                                    <input type="submit" class="btn btn-primary" value="Отправить" />
+                                                    <input type="hidden" asp-for="JournalStrId" value="@item.Id" />
+                                                </div>
+                                                <input type="hidden" asp-for="Explanation" value="0"/>
+                                                <input type="hidden" asp-for="Journals" value="@Model.Journals" />
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
                             }
-                            if (!item.Status && DateTime.Now > item.DateEnd && item.Desc == null)
+                            if (!item.Status && DateTime.Now > item.DateEnd && item.Explanation == null)
                             {
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#expalationNote">
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#EN-@item.Id">
                                     Написать объяснительную
                                 </button>
 
                                 <!-- Modal -->
-                                <div class="modal fade" id="expalationNote" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal fade" id="EN-@item.Id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                     <div class="modal-dialog" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header">
@@ -96,7 +137,7 @@
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
                                             </div>
-                                            <form asp-action="WriteExplanatoryNote">
+                                            <form asp-action="WriteExplanatoryNoteToJournal">
                                                 <div class="modal-body">
                                                     <div class="form-group">
                                                         <label class="control-label" for="userFio">От:</label>
@@ -116,6 +157,8 @@
                                                     <input type="submit" class="btn btn-primary" value="Отправить" />
                                                     <input type="hidden" asp-for="JournalStrId" value="@item.Id" />
                                                 </div>
+                                                <input type="hidden" asp-for="Comment" value="0" />
+                                                <input type="hidden" asp-for="Journals" value="@Model.Journals" />
                                             </form>
                                         </div>
                                     </div>
@@ -129,3 +172,6 @@
     </tbody>
 </table>
 
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -58,7 +58,7 @@
                     {
                         <p>Ожидание/Выполнение</p>
                     }
-                    else if (item.Desc != null)
+                    else if (item.Explanation != null)
                     {
                         <p>Написана объяснительная</p>
                     }
@@ -72,18 +72,18 @@
                 @Html.DisplayFor(modelItem => item.Comment)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Desc.TaskName)
+                @Html.DisplayFor(modelItem => item.Explanation.TaskName)
             </td>
             <td>
                 @{
-                    if (item.Desc != null)
+                    if (item.Explanation != null)
                     {
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#expalationNote">
-                            Просмотреть объяснения
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#expalationNote-@item.Id">
+                            Просмотреть объяснение
                         </button>
 
                         <!-- Modal -->
-                        <div class="modal fade" id="expalationNote" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal fade" id="expalationNote-@item.Id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
@@ -95,15 +95,15 @@
                                     <div class="modal-body">
                                         <div class="form-group">
                                             <label class="control-label" for="userFio">От:</label>
-                                            <p class="form-control" id="userFio">@String.Format($"{item.Desc.User.SecondName} {item.Desc.User.FirstName} {item.Desc.User.ThirdName}")</p>
+                                            <p class="form-control" id="userFio">@String.Format($"{item.Explanation.User.SecondName} {item.Explanation.User.FirstName} {item.Explanation.User.ThirdName}")</p>
                                         </div>
                                         <div class="form-group">
                                             <label asp-for="TaskName"></label>
-                                            <p class="form-control">@item.Desc.TaskName</p>
+                                            <p class="form-control">@item.Explanation.TaskName</p>
                                         </div>
                                         <div class="form-group">
                                             <label asp-for="Explanation" class="control-label"></label>
-                                            <textarea class="form-control border" readonly>@item.Desc.Explanation</textarea>
+                                            <textarea class="form-control border" readonly>@item.Explanation.Explanation</textarea>
                                         </div>
                                     </div>
                                     <div class="modal-footer">
