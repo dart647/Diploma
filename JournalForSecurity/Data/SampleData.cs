@@ -9,16 +9,100 @@ namespace JournalForSecurity.Data
 {
     public class SampleData
     {
-        public static void Initialize(AppDbContext dbContext)
+        public static async Task InitializeAsync(AppDbContext dbContext, UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
             if (!dbContext.Roles.Any())
             {
-                dbContext.Roles.AddRange(
-                    new IdentityRole("Admin") { NormalizedName = "ADMIN" },
-                    new IdentityRole("Security") { NormalizedName = "SECURITY" },
-                    new IdentityRole("HeadOfDepartment") { NormalizedName = "HEADOFDEPARTMENT" },
-                    new IdentityRole("HeadOfOrganisation") { NormalizedName = "HEADOFORGANISATION" }
-                    );
+                await roleManager.CreateAsync(new IdentityRole("Admin"));
+                await roleManager.CreateAsync(new IdentityRole("Security"));
+                await roleManager.CreateAsync(new IdentityRole("HeadOfDepartment"));
+                await roleManager.CreateAsync(new IdentityRole("HeadOfOrganisation"));
+            }
+            if (!userManager.Users.Any())
+            {
+                var user = new User()
+                {
+                    Birthday = new DateTime(),
+                    CardEvents = new List<CardEvent>(),
+                    CardRequests = new List<CardRequest>(),
+                    CardTasks = new List<CardTask>(),
+                    Email = "",
+                    ExplanatoryNotes = new List<ExplanatoryNote>(),
+                    FirstName = "admin",
+                    SecondName = "",
+                    ThirdName = "",
+                    UserName = "admin"
+                };
+                var password = "admin";
+
+                var result = await userManager.CreateAsync(user, password);
+                if(result.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(user, Roles.Admin.ToString());
+                }
+                
+                user = new User()
+                {
+                    Birthday = new DateTime(),
+                    CardEvents = new List<CardEvent>(),
+                    CardRequests = new List<CardRequest>(),
+                    CardTasks = new List<CardTask>(),
+                    Email = "",
+                    ExplanatoryNotes = new List<ExplanatoryNote>(),
+                    FirstName = "security",
+                    SecondName = "",
+                    ThirdName = "",
+                    UserName = "security"
+                };
+                password = "security";
+
+                result = await userManager.CreateAsync(user, password);
+                if (result.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(user, Roles.Security.ToString());
+                }
+
+                user = new User()
+                {
+                    Birthday = new DateTime(),
+                    CardEvents = new List<CardEvent>(),
+                    CardRequests = new List<CardRequest>(),
+                    CardTasks = new List<CardTask>(),
+                    Email = "",
+                    ExplanatoryNotes = new List<ExplanatoryNote>(),
+                    FirstName = "hod",
+                    SecondName = "",
+                    ThirdName = "",
+                    UserName = "hod"
+                };
+                password = "hod";
+
+                result = await userManager.CreateAsync(user, password);
+                if (result.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(user, Roles.HeadOfDepartment.ToString());
+                }
+
+                user = new User()
+                {
+                    Birthday = new DateTime(),
+                    CardEvents = new List<CardEvent>(),
+                    CardRequests = new List<CardRequest>(),
+                    CardTasks = new List<CardTask>(),
+                    Email = "",
+                    ExplanatoryNotes = new List<ExplanatoryNote>(),
+                    FirstName = "hoo",
+                    SecondName = "",
+                    ThirdName = "",
+                    UserName = "hoo"
+                };
+                password = "hoo";
+
+                result = await userManager.CreateAsync(user, password);
+                if (result.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(user, Roles.HeadOfOrganisation.ToString());
+                }
             }
             if (!dbContext.Departments.Any())
             {
@@ -36,42 +120,7 @@ namespace JournalForSecurity.Data
                     dbContext.Departments.Add(new Department() { Name = item });
                 }
             }
-            if (!dbContext.Journals.Any())
-            {
-                foreach (var item in dbContext.Departments.ToList())
-                {
-                    for (int i = 0; i < 5; i++)
-                    {
-                        Journal journal = new Journal()
-                        {
-                            DateBegin = new DateTime(2020, 1, 20, 8 + i * 2, 0, 0),
-                            DateEnd = new DateTime(2020, 1, 20, 9 + i * 2, 0, 0),
-                            DepartmentId = item.Id
-                        };
-                        dbContext.Journals.Add(journal);
-
-                        dbContext.SaveChanges();
-                    }
-                }
-            }
-            if (!dbContext.CardTasks.Any())
-            {
-                foreach (var journal in dbContext.Journals.ToList())
-                {
-                    CardTask card = new CardTask()
-                    {
-                        DateBegin = journal.DateBegin,
-                        DateEnd = journal.DateEnd,
-                        Name = "Задача " + journal.DateBegin,
-                        State = false,
-                        UserId = dbContext.Users.FirstOrDefault(u => u.UserName == "hod").Id
-                    };
-                    dbContext.CardTasks.Add(card);
-
-                    dbContext.SaveChanges();
-                }
-            }
-            dbContext.SaveChanges();
+              dbContext.SaveChanges();
         }
     }
 }

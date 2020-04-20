@@ -22,39 +22,35 @@ namespace JournalForSecurity.Controllers
             this.dbContext = dbContext;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string department)
         {
             var user = await dbContext.Users
-                .Include(u => u.Department)
-                .ThenInclude(jr => jr.Journal)
-                .ThenInclude(en => en.Explanation)
-                .FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
+                .FirstOrDefaultAsync(u => u.UserName.Equals(User.Identity.Name));
 
             ViewBag.UserFIO = String.Format($"{user.SecondName} {user.FirstName} {user.ThirdName}");
 
             SecJournalModel model = new SecJournalModel()
             {
-                Journals = user.Department.Journal
-                .Where(d => d.DateBegin.Date.Equals(DateTime.Now.Date))
+                Journals = dbContext.Journals
+                .Where(d => d.DateBegin.Date.Equals(DateTime.Now.Date) && d.Department.Name.Equals(department))
                 .ToList()
             };
 
             return View(model);
         }
 
-        public async Task<IActionResult> Tasks()
+        public async Task<IActionResult> Tasks(string department)
         {
             var user = await dbContext.Users
-                .Include(u => u.Department)
-                .FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
+                .FirstOrDefaultAsync(u => u.UserName.Equals(User.Identity.Name));
 
             ViewBag.UserFIO = String.Format($"{user.SecondName} {user.FirstName} {user.ThirdName}");
 
             var tasks = await dbContext.CardTasks
                 .Include(u => u.User)
                 .Include(d => d.Department)
-                .Include(e=>e.Explanation)
-                .Where(c => c.Department == user.Department)
+                .Include(e => e.Explanation)
+                .Where(c => c.Department.Equals(department))
                 .ToListAsync();
 
             var model = new SecTaskModel()
@@ -65,17 +61,16 @@ namespace JournalForSecurity.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> EventsAsync()
+        public async Task<IActionResult> EventsAsync(string department)
         {
             List<CardEvent> items = new List<CardEvent>();
             var user = await dbContext.Users
-                .Include(u => u.Department)
                 .FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
 
             items = await dbContext.CardEvents
                 .Include(d => d.Department)
                 .Include(u => u.User)
-                .Where(c => c.Department == user.Department)
+                .Where(c => c.Department.Equals(department))
                 .ToListAsync();
 
             return View(items);

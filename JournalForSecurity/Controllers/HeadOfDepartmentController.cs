@@ -26,33 +26,28 @@ namespace JournalForSecurity.Controllers
 
         public async Task<IActionResult> IndexAsync()
         {
-            var user = await dbContext.Users
-                .Include(u => u.Department)
-                .ThenInclude(jr => jr.Journal)
-                .ThenInclude(en=>en.Explanation)
-                .ThenInclude(u=>u.User)
-                .FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
+            var journalStr = await dbContext.Journals
+                .Include(d => d.Department)
+                .Where(j => j.DateBegin.Date.Equals(DateTime.Now.Date) && j.Department.Name.Equals(RouteData.Values["department"].ToString()))
+                .ToListAsync();
 
             SecJournalModel model = new SecJournalModel()
             {
-                Journals = user.Department.Journal.Where(d=>d.DateBegin.Date.Equals(DateTime.Now.Date)).ToList()
+                Journals = journalStr
             };
 
             return View(model);
         }
 
-        public async Task<IActionResult> TasksAsync()
+        public async Task<IActionResult> TasksAsync(string department)
         {
-            var user = await dbContext.Users
-                .Include(u => u.Department)
-                .FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
 
             var tasks = await dbContext.CardTasks
                 .Include(u => u.User)
                 .Include(d => d.Department)
                 .Include(e=>e.Explanation)
                 .ThenInclude(u=>u.User)
-                .Where(c => c.Department == user.Department)
+                .Where(c => c.Department.Name.Equals(department))
                 .ToListAsync();
 
             var model = new SecTaskModel()
@@ -63,33 +58,27 @@ namespace JournalForSecurity.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> EventsAsync()
+        public async Task<IActionResult> EventsAsync(string department)
         {
             List<CardEvent> items = new List<CardEvent>();
-            var user = await dbContext.Users
-                .Include(u => u.Department)
-                .FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
 
             items = await dbContext.CardEvents
                 .Include(d => d.Department)
                 .Include(u => u.User)
-                .Where(c => c.Department == user.Department)
+                .Where(c => c.Department.Name.Equals(department))
                 .ToListAsync();
 
             return View(items);
         }
 
-        public async Task<IActionResult> RequestsAsync()
+        public async Task<IActionResult> RequestsAsync(string department)
         {
             List<CardRequest> items = new List<CardRequest>();
-            var user = await dbContext.Users
-                .Include(u => u.Department)
-                .FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
 
             items = await dbContext.CardRequests
                 .Include(d => d.Department)
                 .Include(u => u.User)
-                .Where(c => c.Department == user.Department)
+                .Where(c => c.Department.Name.Equals(department))
                 .ToListAsync();
 
             return View(items);
@@ -100,10 +89,9 @@ namespace JournalForSecurity.Controllers
             return View();
         }
 
-        public async Task<IActionResult> CreateRoundAsync()
+        public IActionResult CreateRound(string department)
         {
-            User user = await dbContext.Users.Include(u => u.Department).FirstOrDefaultAsync(u => u.UserName.Equals(User.Identity.Name));
-            ViewBag.Department = user.Department.Name;
+            ViewBag.Department = department;
             return View();
         }
 
@@ -112,17 +100,16 @@ namespace JournalForSecurity.Controllers
         {
             if (ModelState.IsValid)
             {
-                User user = await dbContext.Users.Include(u => u.Department).FirstOrDefaultAsync(u => u.UserName.Equals(User.Identity.Name));
 
                 CardTask newCard = new CardTask()
                 {
                     DateBegin = task.DateBegin,
                     DateEnd = task.DateEnd,
-                    Department = user.Department,
+                    Department = task.Department,
                     Desc = task.Desc,
                     Name = task.Name,
                     State = false,
-                    User = user
+                    User = task.User
                 };
 
                 await dbContext.CardTasks.AddAsync(newCard);

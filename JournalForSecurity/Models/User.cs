@@ -27,10 +27,8 @@ namespace JournalForSecurity.Models
         public List<CardEvent> CardEvents { get; set; }
 
         public List<CardTask> CardTasks { get; set; }
-        public List<ExplanatoryNote> ExplanatoryNotes { get; set; }
 
-        public Department Department { get; set; }
-        public int? DepartmentId { get; set; }
+        public List<ExplanatoryNote> ExplanatoryNotes { get; set; }
 
         public User()
         {
@@ -39,5 +37,13 @@ namespace JournalForSecurity.Models
             CardTasks = new List<CardTask>();
             ExplanatoryNotes = new List<ExplanatoryNote>();
         }
+    }
+
+    public enum Roles
+    {
+        Admin,
+        HeadOfDepartment,
+        HeadOfOrganisation,
+        Security
     }
 }

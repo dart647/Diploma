@@ -27,6 +27,7 @@ namespace JournalForSecurity.Models
 
         [Display(Name = "Объяснительная")]
         public ExplanatoryNote Explanation { get; set; }
+        public int? ExplanationId { get; set; }
 
         [Display(Name = "Отдел")]
         public Department Department { get; set; }

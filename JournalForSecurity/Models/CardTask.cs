@@ -39,7 +39,12 @@ namespace JournalForSecurity.Models
         public User User { get; set; }
         public string UserId { get; set; }
 
+        [Display(Name = "Отдел")]
         public Department Department { get; set; }
         public int? DepartmentId { get; set; }
+
+        [Display(Name = "Объяснительная")]
+        public ExplanatoryNote Explanatory { get; set; }
+        public int? ExplanatoryId { get; set; }
     }
 }

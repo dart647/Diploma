@@ -36,6 +36,9 @@ namespace JournalForSecurity.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("ExplanatoryId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsAlertResult")
                         .HasColumnType("bit");
 
@@ -49,6 +52,8 @@ namespace JournalForSecurity.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("DepartmentId");
+
+                    b.HasIndex("ExplanatoryId");
 
                     b.HasIndex("UserId");
 
@@ -113,6 +118,9 @@ namespace JournalForSecurity.Migrations
                     b.Property<int?>("ExplanationId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("ExplanatoryId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -128,6 +136,8 @@ namespace JournalForSecurity.Migrations
                     b.HasIndex("DepartmentId");
 
                     b.HasIndex("ExplanationId");
+
+                    b.HasIndex("ExplanatoryId");
 
                     b.HasIndex("UserId");
 
@@ -159,16 +169,24 @@ namespace JournalForSecurity.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("DepartmentId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Explanation")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TaskName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("TaskType")
+                        .HasColumnType("int");
+
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DepartmentId");
 
                     b.HasIndex("UserId");
 
@@ -227,9 +245,6 @@ namespace JournalForSecurity.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("DepartmentId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(256)")
                         .HasMaxLength(256);
@@ -280,8 +295,6 @@ namespace JournalForSecurity.Migrations
                         .HasMaxLength(256);
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DepartmentId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasName("EmailIndex");
@@ -431,6 +444,10 @@ namespace JournalForSecurity.Migrations
                         .WithMany("CardEvents")
                         .HasForeignKey("DepartmentId");
 
+                    b.HasOne("JournalForSecurity.Models.ExplanatoryNote", "Explanatory")
+                        .WithMany()
+                        .HasForeignKey("ExplanatoryId");
+
                     b.HasOne("JournalForSecurity.Models.User", "User")
                         .WithMany("CardEvents")
                         .HasForeignKey("UserId");
@@ -457,6 +474,10 @@ namespace JournalForSecurity.Migrations
                         .WithMany()
                         .HasForeignKey("ExplanationId");
 
+                    b.HasOne("JournalForSecurity.Models.ExplanatoryNote", "Explanatory")
+                        .WithMany()
+                        .HasForeignKey("ExplanatoryId");
+
                     b.HasOne("JournalForSecurity.Models.User", "User")
                         .WithMany("CardTasks")
                         .HasForeignKey("UserId");
@@ -464,6 +485,10 @@ namespace JournalForSecurity.Migrations
 
             modelBuilder.Entity("JournalForSecurity.Models.ExplanatoryNote", b =>
                 {
+                    b.HasOne("JournalForSecurity.Models.Department", "Department")
+                        .WithMany("ExplanatoryNotes")
+                        .HasForeignKey("DepartmentId");
+
                     b.HasOne("JournalForSecurity.Models.User", "User")
                         .WithMany("ExplanatoryNotes")
                         .HasForeignKey("UserId");
@@ -478,13 +503,6 @@ namespace JournalForSecurity.Migrations
                     b.HasOne("JournalForSecurity.Models.ExplanatoryNote", "Explanation")
                         .WithMany()
                         .HasForeignKey("ExplanationId");
-                });
-
-            modelBuilder.Entity("JournalForSecurity.Models.User", b =>
-                {
-                    b.HasOne("JournalForSecurity.Models.Department", "Department")
-                        .WithMany("Users")
-                        .HasForeignKey("DepartmentId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

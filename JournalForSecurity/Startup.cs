@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using JournalForSecurity.Data;
 using JournalForSecurity.Models;
+using JournalForSecurity.ViewModels;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -30,7 +31,7 @@ namespace JournalForSecurity
         {
             //Подключение Менеджера пользователей
             services.AddIdentity<User, IdentityRole>(opts => {
-                opts.Password.RequiredLength = 5;   // минимальная длина
+                opts.Password.RequiredLength = 3;   // минимальная длина
                 opts.Password.RequireNonAlphanumeric = false;   // требуются ли не алфавитно-цифровые символы
                 opts.Password.RequireLowercase = false; // требуются ли символы в нижнем регистре
                 opts.Password.RequireUppercase = false; // требуются ли символы в верхнем регистре
@@ -49,6 +50,7 @@ namespace JournalForSecurity
                     options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
                 });
 
+            services.AddTransient<StatisticModel>();
             services.AddMvc();
         }
 
@@ -78,11 +80,11 @@ namespace JournalForSecurity
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Account}/{action=Login}");
+                    pattern: "{controller=Account}/{action=Login}/{department?}");
 
-                endpoints.MapControllerRoute(
-                    name: "reports",
-                    pattern: "{controller=HeadOfOrganisation}/{action=Index}/{mode?}");
+                //endpoints.MapControllerRoute(
+                //    name: "reports",
+                //    pattern: "{controller=HeadOfOrganisation}/{action=Index}/{mode?}");
             });
         }
     }

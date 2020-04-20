@@ -10,24 +10,37 @@ namespace JournalForSecurity.Models
     {
         public int Id { get; set; }
 
-        [Display(Name = "Название")]
+        [Display(Name = "Наименование")]
         public string Name { get; set; }
 
-        public List<User> Users { get; set; }
+        public List<Journal> Journal { get; set; }
+
         public List<CardEvent> CardEvents { get; set; }
+
         public List<CardRequest> CardRequests { get; set; }
+
         public List<CardTask> CardTasks { get; set; }
 
-        [Display(Name = "Журнал")]
-        public List<Journal> Journal { get; set; }
+        public List<ExplanatoryNote> ExplanatoryNotes { get; set; }
 
         public Department()
         {
-            Users = new List<User>();
             Journal = new List<Journal>();
             CardTasks = new List<CardTask>();
             CardRequests = new List<CardRequest>();
             CardEvents = new List<CardEvent>();
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Department department &&
+                   Id == department.Id &&
+                   Name == department.Name;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Id, Name);
         }
     }
 }

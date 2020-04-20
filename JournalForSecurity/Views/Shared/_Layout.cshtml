@@ -24,7 +24,7 @@
                                     if (User.IsInRole("Security"))
                                     {
                                         <li class="nav-item">
-                                            <a class="nav-link" asp-action="Index" asp-controller="Security">Журнал</a>
+                                            <a class="nav-link" asp-action="Index" asp-controller="Security" asp-route-department="department">Журнал</a>
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link" asp-action="Tasks" asp-controller="Security">Задачи</a>
@@ -63,7 +63,7 @@
                                 }
                             </ul>
                             <form class="justify-content-end" asp-controller="Account" asp-action="Logout">
-                                <input type="submit" class="btn btn-danger" value="Выход">
+                                <input type="submit" class="btn btn-outline-danger" value="Выход">
                             </form>                           
                         </div>
                     }
