@@ -22,8 +22,6 @@ namespace JournalForSecurity.Models
         [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = true)]
         public DateTime Birthday { get; set; }
 
-        public List<CardRequest> CardRequests { get; set; }
-
         public List<CardEvent> CardEvents { get; set; }
 
         public List<CardTask> CardTasks { get; set; }
@@ -33,7 +31,6 @@ namespace JournalForSecurity.Models
         public User()
         {
             CardEvents = new List<CardEvent>();
-            CardRequests = new List<CardRequest>();
             CardTasks = new List<CardTask>();
             ExplanatoryNotes = new List<ExplanatoryNote>();
         }

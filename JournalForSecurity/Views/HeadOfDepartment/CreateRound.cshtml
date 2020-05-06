@@ -13,34 +13,99 @@
         <form asp-action="CreateRound">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="RoundCount" class="control-label"></label>
-                <input asp-for="RoundCount" class="form-control" />
-                <span asp-validation-for="RoundCount" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="DayBegin" class="control-label"></label>
-                <input asp-for="DayBegin" class="form-control" />
+                <input asp-for="DayBegin" class="form-control"/>
                 <span asp-validation-for="DayBegin" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="DayEnd" class="control-label"></label>
-                <input asp-for="DayEnd" class="form-control" />
+                <input asp-for="DayEnd" class="form-control"/>
                 <span asp-validation-for="DayEnd" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Department" class="control-label"></label>
-                <input asp-for="Department" class="form-control" value="@ViewBag.Department" readonly/>
+                <input asp-for="Department" class="form-control" value="@ViewBag.Department" readonly />
                 <span asp-validation-for="Department" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <input type="hidden" asp-for="Rounds" value="@Model.Rounds" />
                 <input type="submit" value="Создать" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Назад</a>
+<div class="row">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>
+                    Отдел
+                </th>
+                <th>
+                    Дата начала
+                </th>
+                <th>
+                    Дата конца
+                </th>
+                <th>
+                    Реальное время
+                </th>
+                <th>
+                    Статус
+                </th>
+                <th>
+                    Описание
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Rounds)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Department.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DateBegin)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DateEnd)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.RealDate)
+                    </td>
+                    <td>
+                        @{
+                            if (item.Status)
+                            {
+                                <p>Выполнено</p>
+                            }
+                            else if (item.DateEnd > DateTime.Now)
+                            {
+                                <p>Ожидание/Выполнение</p>
+                            }
+                            else if (item.Explanation != null)
+                            {
+                                <p>Написана объяснительная</p>
+                            }
+                            else
+                            {
+                                <p>Не выполнено</p>
+                            }
+                        }
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Comment)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Explanation.TaskName)
+                    </td>                    
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
 
 @section Scripts {

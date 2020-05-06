@@ -24,7 +24,6 @@ namespace JournalForSecurity.Data
                 {
                     Birthday = new DateTime(),
                     CardEvents = new List<CardEvent>(),
-                    CardRequests = new List<CardRequest>(),
                     CardTasks = new List<CardTask>(),
                     Email = "",
                     ExplanatoryNotes = new List<ExplanatoryNote>(),
@@ -45,7 +44,6 @@ namespace JournalForSecurity.Data
                 {
                     Birthday = new DateTime(),
                     CardEvents = new List<CardEvent>(),
-                    CardRequests = new List<CardRequest>(),
                     CardTasks = new List<CardTask>(),
                     Email = "",
                     ExplanatoryNotes = new List<ExplanatoryNote>(),
@@ -66,7 +64,6 @@ namespace JournalForSecurity.Data
                 {
                     Birthday = new DateTime(),
                     CardEvents = new List<CardEvent>(),
-                    CardRequests = new List<CardRequest>(),
                     CardTasks = new List<CardTask>(),
                     Email = "",
                     ExplanatoryNotes = new List<ExplanatoryNote>(),
@@ -87,7 +84,6 @@ namespace JournalForSecurity.Data
                 {
                     Birthday = new DateTime(),
                     CardEvents = new List<CardEvent>(),
-                    CardRequests = new List<CardRequest>(),
                     CardTasks = new List<CardTask>(),
                     Email = "",
                     ExplanatoryNotes = new List<ExplanatoryNote>(),

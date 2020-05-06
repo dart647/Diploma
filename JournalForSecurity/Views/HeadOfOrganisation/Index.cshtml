@@ -1,4 +1,4 @@
-﻿@model ReportModel
+﻿@model ReportPages
 @{
     ViewData["Title"] = "Глава организации";
 }
@@ -13,13 +13,13 @@
                 <a class="nav-link" asp-action="Index">Все</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="~/HeadOfOrganisation/Index/journal">Обходы</a>
+                <a class="nav-link" asp-action="Index" asp-route-mode="journal">Обходы</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="~/HeadOfOrganisation/Index/tasks">Задачи</a>
+                <a class="nav-link" asp-action="Index" asp-route-mode="tasks">Задачи</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="~/HeadOfOrganisation/Index/events">События</a>
+                <a class="nav-link" asp-action="Index" asp-route-mode="events">События</a>
             </li>
         </ul>
     </nav>
@@ -40,7 +40,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model.Journals)
+            @foreach (var item in Model.ReportModel.Journals)
             {
                 <tr>
                     <td>
@@ -101,7 +101,7 @@
                     </td>
                 </tr>
             }
-            @foreach (var item in Model.Tasks)
+            @foreach (var item in Model.ReportModel.Tasks)
             {
                 <tr>
                     <td>
@@ -126,7 +126,7 @@
                         @if (item.Explanation != null)
                         {
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#expalationNote">
-                                Просмотреть объяснение
+                                Просмотреть объяснительную
                             </button>
 
                             <!-- Modal -->
@@ -163,7 +163,7 @@
                     </td>
                 </tr>
             }
-            @foreach (var item in Model.Events)
+            @foreach (var item in Model.ReportModel.Events)
             {
                 <tr>
                     <td>
@@ -179,5 +179,31 @@
             }
         </tbody>
     </table>
+
+    <div class="pagination justify-content-center">
+        @if (Model.HasPreviousPage)
+        {
+            <div class="page-item">
+                <a class="page-link" asp-action="Index" asp-route-mode="@ViewBag.Mode" asp-route-page="1">В начало</a>
+            </div>
+            <div class="page-item">
+                <a class="page-link" asp-action="Index" asp-route-mode="@ViewBag.Mode" asp-route-page="@(Model.PageNumber - 1)">Назад</a>
+            </div>
+        }
+
+        <div class="page-item">
+            <p class="page-link">Страница @Model.PageNumber из @Model.TotalPages</p>
+        </div>
+
+        @if (Model.HasNextPage)
+        {
+            <div class="page-item">
+                <a class="page-link" asp-action="Index" asp-route-mode="@ViewBag.Mode" asp-route-page="@(Model.PageNumber + 1)">Вперед</a>
+            </div>
+            <div class="page-item">
+                <a class="page-link" asp-action="Index" asp-route-mode="@ViewBag.Mode" asp-route-page="@Model.TotalPages">В конец</a>
+            </div>
+        }
+    </div>
 </div>
 

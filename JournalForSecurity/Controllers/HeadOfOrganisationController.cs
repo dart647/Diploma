@@ -22,9 +22,12 @@ namespace JournalForSecurity.Controllers
             this.dbContext = dbContext;
         }
 
-        public IActionResult Index(string mode)
+        public IActionResult Index(string mode, int page = 1)
         {
-            var model = new ReportModel(dbContext, mode);
+            ViewBag.Mode = mode;
+
+            var report = new ReportModel(dbContext);
+            var model = report.GetReport(mode, page);
 
             return View(model);
         }
@@ -47,9 +50,11 @@ namespace JournalForSecurity.Controllers
             return View();
         }
 
-        public IActionResult Statistic()
+        public IActionResult Statistic(string departmentName)
         {
+            var department = dbContext.Departments.FirstOrDefault(d => d.Name.Equals(departmentName));
             var model = new StatisticModel(dbContext);
+            model = model.GetDepartmentStatistic(department);
             return View(model);
         }
 

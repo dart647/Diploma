@@ -17,8 +17,6 @@ namespace JournalForSecurity.Models
 
         public List<CardEvent> CardEvents { get; set; }
 
-        public List<CardRequest> CardRequests { get; set; }
-
         public List<CardTask> CardTasks { get; set; }
 
         public List<ExplanatoryNote> ExplanatoryNotes { get; set; }
@@ -27,7 +25,6 @@ namespace JournalForSecurity.Models
         {
             Journal = new List<Journal>();
             CardTasks = new List<CardTask>();
-            CardRequests = new List<CardRequest>();
             CardEvents = new List<CardEvent>();
         }
 

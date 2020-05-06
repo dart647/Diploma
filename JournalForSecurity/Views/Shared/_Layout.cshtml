@@ -24,28 +24,31 @@
                                     if (User.IsInRole("Security"))
                                     {
                                         <li class="nav-item">
-                                            <a class="nav-link" asp-action="Index" asp-controller="Security" asp-route-department="department">Журнал</a>
+                                            <a class="nav-link" asp-action="Index" asp-controller="Security"
+                                               asp-route-department="@ViewBag.Department">Журнал</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" asp-action="Tasks" asp-controller="Security">Задачи</a>
+                                            <a class="nav-link" asp-action="Tasks" asp-controller="Security"
+                                               asp-route-department="@ViewBag.Department">Задачи</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" asp-action="Events" asp-controller="Security">События</a>
+                                            <a class="nav-link" asp-action="Events" asp-controller="Security"
+                                               asp-route-department="@ViewBag.Department">События</a>
                                         </li>
                                     }
                                     if (User.IsInRole("HeadOfDepartment"))
                                     {
                                         <li class="nav-item">
-                                            <a class="nav-link" asp-action="Index" asp-controller="HeadOfDepartment">Журнал</a>
+                                            <a class="nav-link" asp-action="Index" asp-controller="HeadOfDepartment"
+                                               asp-route-department="@ViewBag.Department">Журнал</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" asp-action="Tasks" asp-controller="HeadOfDepartment">Задачи</a>
+                                            <a class="nav-link" asp-action="Tasks" asp-controller="HeadOfDepartment"
+                                               asp-route-department="@ViewBag.Department">Задачи</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" asp-action="Events" asp-controller="HeadOfDepartment">События</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" asp-action="Requests" asp-controller="HeadOfDepartment">Запросы</a>
+                                            <a class="nav-link" asp-action="Events" asp-controller="HeadOfDepartment"
+                                               asp-route-department="@ViewBag.Department">События</a>
                                         </li>
                                     }
                                     if (User.IsInRole("HeadOfOrganisation"))
@@ -64,7 +67,7 @@
                             </ul>
                             <form class="justify-content-end" asp-controller="Account" asp-action="Logout">
                                 <input type="submit" class="btn btn-outline-danger" value="Выход">
-                            </form>                           
+                            </form>
                         </div>
                     }
                 }

@@ -8,6 +8,7 @@ using JournalForSecurity.Service;
 using JournalForSecurity.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 
 namespace JournalForSecurity.Controllers
@@ -28,8 +29,12 @@ namespace JournalForSecurity.Controllers
         {
             var journalStr = await dbContext.Journals
                 .Include(d => d.Department)
+                .Include(e => e.Explanation)
+                .ThenInclude(u => u.User)
                 .Where(j => j.DateBegin.Date.Equals(DateTime.Now.Date) && j.Department.Name.Equals(RouteData.Values["department"].ToString()))
                 .ToListAsync();
+
+            ViewBag.Department = RouteData.Values["department"];
 
             SecJournalModel model = new SecJournalModel()
             {
@@ -39,16 +44,18 @@ namespace JournalForSecurity.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> TasksAsync(string department)
+        public async Task<IActionResult> TasksAsync()
         {
 
             var tasks = await dbContext.CardTasks
                 .Include(u => u.User)
                 .Include(d => d.Department)
-                .Include(e=>e.Explanation)
-                .ThenInclude(u=>u.User)
-                .Where(c => c.Department.Name.Equals(department))
+                .Include(e => e.Explanation)
+                .ThenInclude(u => u.User)
+                .Where(c => c.Department.Name.Equals(RouteData.Values["department"].ToString()))
                 .ToListAsync();
+
+            ViewBag.Department = RouteData.Values["department"];
 
             var model = new SecTaskModel()
             {
@@ -58,41 +65,41 @@ namespace JournalForSecurity.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> EventsAsync(string department)
+        public async Task<IActionResult> EventsAsync()
         {
             List<CardEvent> items = new List<CardEvent>();
 
             items = await dbContext.CardEvents
                 .Include(d => d.Department)
                 .Include(u => u.User)
-                .Where(c => c.Department.Name.Equals(department))
+                .Where(c => c.Department.Name.Equals(RouteData.Values["department"].ToString()))
                 .ToListAsync();
 
-            return View(items);
-        }
-
-        public async Task<IActionResult> RequestsAsync(string department)
-        {
-            List<CardRequest> items = new List<CardRequest>();
-
-            items = await dbContext.CardRequests
-                .Include(d => d.Department)
-                .Include(u => u.User)
-                .Where(c => c.Department.Name.Equals(department))
-                .ToListAsync();
+            ViewBag.Department = RouteData.Values["department"];
 
             return View(items);
         }
 
         public IActionResult CreateTask()
         {
+            ViewBag.Department = RouteData.Values["department"];
             return View();
         }
 
-        public IActionResult CreateRound(string department)
+        public async Task<IActionResult> CreateRoundAsync()
         {
+            var department = RouteData.Values["department"];
             ViewBag.Department = department;
-            return View();
+
+            var model = new CreateRoundModel()
+            {
+                Rounds = await dbContext.Journals
+                .Include(d => d.Department)
+                .Where(j => j.DateBegin.Date.Equals(DateTime.Now.Date) &&
+                j.Department.Name.Equals(department.ToString()))
+                .ToListAsync()
+            };
+            return View(model);
         }
 
         [HttpPost]
@@ -100,26 +107,36 @@ namespace JournalForSecurity.Controllers
         {
             if (ModelState.IsValid)
             {
-
                 CardTask newCard = new CardTask()
                 {
                     DateBegin = task.DateBegin,
                     DateEnd = task.DateEnd,
-                    Department = task.Department,
+                    DepartmentId = dbContext.Departments.Where(d => d.Name.Equals(RouteData.Values["department"].ToString())).Select(d => d.Id).FirstOrDefault(),
                     Desc = task.Desc,
                     Name = task.Name,
                     State = false,
-                    User = task.User
+                    UserId = dbContext.Users.Where(u => u.UserName.Equals(User.Identity.Name)).Select(u => u.Id).FirstOrDefault()
                 };
 
                 await dbContext.CardTasks.AddAsync(newCard);
                 dbContext.SaveChanges();
 
-                return RedirectToAction("Tasks");
+                var url = RedirectToAction("Tasks");
+                url.RouteValues = new RouteValueDictionary();
+                var result = url.RouteValues.TryAdd("department", RouteData.Values["department"]);
+                if (!result)
+                {
+                    ModelState.AddModelError("", "Ошибка переадресовки");
+                    ViewBag.Department = RouteData.Values["department"];
+                    return View();
+                }
+
+                return url;
             }
             else
             {
                 ModelState.AddModelError("", "Ошибка ввода данных");
+                ViewBag.Department = RouteData.Values["department"];
             }
             return View();
         }
@@ -139,30 +156,56 @@ namespace JournalForSecurity.Controllers
         {
             if (ModelState.IsValid)
             {
-                double betweenRounds = (double) model.DayEnd.Subtract(model.DayBegin).Hours / model.RoundCount;
-                int timeToRound = 1;
+                ViewBag.Department = RouteData.Values["department"];
+                if (model.DayEnd <= model.DayBegin)
+                {
+                    ModelState.AddModelError("", "Время окончания обхода не может быть меньше или равным времени начала обхода");
+                    return View(model);
+                }
+
                 Department department = await dbContext.Departments.FirstOrDefaultAsync(d => d.Name.Equals(model.Department));
 
-                for (int i = 0; i < model.RoundCount; i++)
+                if (dbContext.Journals.Any(j => j.DateBegin.Equals(model.DayBegin) 
+                    && j.DateEnd.Equals(model.DayEnd) 
+                    && j.DepartmentId.Equals(department.Id)))
                 {
-                    Journal journalStr = new Journal()
-                    {
-                        DateBegin = DateSetter.SetToday().AddHours(model.DayBegin.AddHours(betweenRounds * i).Hour),
-                        DateEnd = DateSetter.SetToday().AddHours(model.DayBegin.AddHours(timeToRound + betweenRounds * i).Hour),
-                        DepartmentId = department.Id,
-                        Status = false
-                    };
-
-                    await dbContext.Journals.AddAsync(journalStr);
-                    dbContext.SaveChanges();
+                    ModelState.AddModelError("", "Обход с таким временем начала и окончания уже существует");
+                    return View(model);
                 }
-                return RedirectToAction("Index");
+
+                Journal journalStr = new Journal()
+                {
+                    DateBegin = DateTime.Now.Date.AddHours(model.DayBegin.Hour).AddMinutes(model.DayBegin.Minute),
+                    DateEnd = DateTime.Now.Date.AddHours(model.DayEnd.Hour).AddMinutes(model.DayEnd.Minute),
+                    DepartmentId = department.Id,
+                    Status = false
+                };
+
+                await dbContext.Journals.AddAsync(journalStr);
+                dbContext.SaveChanges();
+
+                model.Rounds = await dbContext.Journals
+                    .Include(d => d.Department)
+                    .Where(j => j.DateBegin.Date.Equals(DateTime.Now.Date) &&
+                    j.Department.Id.Equals(department.Id))
+                    .ToListAsync();
+
+                var url = RedirectToAction("CreateRound");
+                url.RouteValues = new RouteValueDictionary();
+                var result = url.RouteValues.TryAdd("department", RouteData.Values["department"]);
+                if (!result)
+                {
+                    ModelState.AddModelError("", "Ошибка переадресовки");
+                    ViewBag.Department = RouteData.Values["department"];
+                    return View(model);
+                }
+                return url;
             }
             else
             {
                 ModelState.AddModelError("", "Введены некорректные данные");
+                ViewBag.Department = RouteData.Values["department"];
             }
-            ViewBag.Departments = await departmentService.GetDepartmentsNamesToSelectListAsync();
             return View(model);
         }
     }

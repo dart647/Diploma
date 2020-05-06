@@ -23,6 +23,7 @@ namespace JournalForSecurity.Models
 
         [Display(Name="Объяснительная")]
         public ExplanatoryNote Explanation { get; set; }
+        public int? ExplanationId { get; set; }
 
         [Display(Name = "Время начала")]
         [Required(ErrorMessage = "Не введено время начала")]
@@ -42,9 +43,5 @@ namespace JournalForSecurity.Models
         [Display(Name = "Отдел")]
         public Department Department { get; set; }
         public int? DepartmentId { get; set; }
-
-        [Display(Name = "Объяснительная")]
-        public ExplanatoryNote Explanatory { get; set; }
-        public int? ExplanatoryId { get; set; }
     }
 }

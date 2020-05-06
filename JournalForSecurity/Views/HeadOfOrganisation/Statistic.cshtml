@@ -5,6 +5,22 @@
 
 <h1 class="text-md-center">Статистика</h1>
 
+<div class="btn-block">
+    <nav class="navbar navbar-expand navbar-brand navbar-light">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" asp-action="Statistic">Все</a>
+            </li>
+            @foreach (var item in Model.DepartmentNames)
+            {
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="Statistic" asp-route-departmentName="@item">@item</a>
+                </li>
+            }
+        </ul>
+    </nav>
+</div>
+
 <h2 class="text-md-center">Обходы</h2>
 
 <p class="text-md-center text-info">
@@ -20,7 +36,7 @@
     Написано объяснительных: @Model.JournalStrUnsuccessCount
 </p>
 <p class="text-md-center text-info">
-    Соотношение выполненных обходов обходов: @Model.JournalStrPercent%
+    Соотношение выполненных обходов обходов: @Model.JournalStrPercent.ToString("0.00")%
 </p>
 
 <h2 class="text-md-center">Задачи</h2>
@@ -38,7 +54,7 @@
     Написано объяснительных: @Model.TasksExplanationCount
 </p>
 <p class="text-md-center text-info">
-    Соотношение выполненных обходов задач: @Model.TasksPercent%
+    Соотношение выполненных обходов задач: @Model.TasksPercent.ToString("0.00")%
 </p>
 
 <h2 class="text-md-center">События</h2>
@@ -46,6 +62,4 @@
 <p class="text-md-center text-info">
     Всего событий: @Model.EventsCount
 </p>
-
-<h2 class="text-md-center">Статистика по территориям</h2>
 
