@@ -43,14 +43,53 @@
                 @Html.DisplayFor(modelItem => item.Date)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.IsAlertResult)
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#alert-@item.Id">
+                    Происшествия
+                </button>
+
+                <!-- Modal -->
+                <div class="modal fade" id="alert-@item.Id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Происшествия</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <form asp-action="AddAlertToEvent" asp-route-department="@ViewBag.Department">
+                                <div class="modal-body">
+                                    <div class="form-group" v-for="alert in alertCount">
+                                        <label class="form-control">Новое происшествие</label>
+                                        <textarea required class="form-control" name="alertResult" rows="4"></textarea>
+                                    </div>
+                                    <div>
+                                        @if (item.IsAlertResult)
+                                        {
+                                            <label class="form-control">Произошедшие проишествия</label>
+                                            foreach (var alert in item.Alerts)
+                                            {
+                                                <textarea rows="6" readonly class="form-control">@alert</textarea>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                                    <input type="submit" class="btn btn-primary" value="Отправить" />
+                                </div>
+                                <input type="hidden" name="id" value="@item.Id" />
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </td>
             <td>
                 @String.Format($"{item.User.FirstName} {item.User.SecondName} {item.User.ThirdName}")
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Department.Id)
-            </td>
+            </td>           
         </tr>
 }
     </tbody>

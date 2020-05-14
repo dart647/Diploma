@@ -19,13 +19,10 @@
                 Дата конца
             </th>
             <th>
-                Реальное время
-            </th>
-            <th>
                 Статус
             </th>
             <th>
-                Описание
+                Комментарий
             </th>
             <th>
                 Объяснительная
@@ -46,9 +43,6 @@
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.DateEnd)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.RealDate)
                     </td>
                     <td>
                         @{
@@ -94,7 +88,7 @@
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
                                             </div>
-                                            <form asp-action="Index">
+                                            <form asp-action="Index" asp-route-department="@ViewBag.Department">
                                                 <div class="modal-body">
                                                     <div class="form-group">
                                                         <label class="control-label" for="userFio">От:</label>
@@ -106,7 +100,7 @@
                                                     </div>
                                                     <div class="form-group">
                                                         <label asp-for="Comment" class="control-label"></label>
-                                                        <textarea rows="5" asp-for="Comment" class="form-control"></textarea>
+                                                        <textarea rows="5" asp-for="Comment" class="form-control" placeholder="Комментарий"></textarea>
                                                     </div>
                                                 </div>
                                                 <div class="modal-footer">
@@ -114,7 +108,7 @@
                                                     <input type="submit" class="btn btn-primary" value="Отправить" />
                                                     <input type="hidden" asp-for="JournalStrId" value="@item.Id" />
                                                 </div>
-                                                <input type="hidden" asp-for="Explanation" value="0"/>
+                                                <input type="hidden" asp-for="Explanation" value="0" />
                                                 <input type="hidden" asp-for="Journals" value="@Model.Journals" />
                                             </form>
                                         </div>

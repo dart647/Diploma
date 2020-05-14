@@ -27,20 +27,120 @@ namespace JournalForSecurity.Controllers
             RoleManager = roleManager;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> IndexAsync(bool isDismissed = false)
         {
-            return View(UserManager.Users);
+            var model = new UsersModel();
+            if (!isDismissed)
+            {
+                model.Users = await UserManager.Users.Where(u => !u.isDismissed).ToListAsync();
+            }
+            else
+            {
+                model.Users = await UserManager.Users.Where(u => u.isDismissed).ToListAsync();
+            }
+
+            return View(model);
         }
 
-        [HttpGet]
         public IActionResult Register()
         {
             ViewBag.Roles = new SelectList(RoleManager.Roles);
             return View();
         }
 
+        public async Task<IActionResult> EditUserAsync(string id)
+        {            
+            return View(await UserManager.FindByIdAsync(id));
+        }
+
+        public async Task<IActionResult> EditPasswordAsync(string id)
+        {
+            var user = await UserManager.FindByIdAsync(id);
+            var model = new ChangePassModel
+            {
+                UserId = user.Id
+            };
+
+            return View(model);
+        }
+
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> IndexAsync(UsersModel model)
+        {
+            var user = await UserManager.FindByIdAsync(model.dUserId);
+            if (user == null)
+            {
+                ModelState.AddModelError("", "Ошибка удаления пользователя: пользователь не найден");
+                return View(model);
+            }
+
+            user.isDismissed = !user.isDismissed;
+            var result = await UserManager.UpdateAsync(user);
+
+            if (!result.Succeeded)
+            {
+                ModelState.AddModelError("", "Ошибка удаления пользователя: невозможно обновление базы данных");
+                return View(model);
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditUserAsync(User user)
+        {
+            if (ModelState.IsValid)
+            {
+                var nUser = await UserManager.FindByIdAsync(user.Id);
+                nUser.FirstName = user.FirstName;
+                nUser.SecondName = user.SecondName;
+                nUser.ThirdName = user.ThirdName;
+                nUser.Birthday = user.Birthday;
+                nUser.Email = user.Email;
+                nUser.PhoneNumber = user.PhoneNumber;
+
+                var result = await UserManager.UpdateAsync(nUser);
+
+                if (!result.Succeeded)
+                {
+                    ModelState.AddModelError("", "Ошибка редактирования пользователя: невозможно обновление базы данных");
+                    return View(user);
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "Ошибка валидации данных. Некоректные данные!");
+                return View(user);
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditPasswordAsync(ChangePassModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await UserManager.FindByIdAsync(model.UserId);
+
+                var result = await UserManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+
+                if (!result.Succeeded)
+                {
+                    ModelState.AddModelError("", "Ошибка смены пароля");
+                    return View(model);
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "Ошибка валидации данных. Некоректные данные!");
+                return View(model);
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
         public async Task<IActionResult> Register(RegisterModel model)
         {
             if (ModelState.IsValid)

@@ -54,7 +54,8 @@ namespace JournalForSecurity.Controllers
                 .Include(u => u.User)
                 .Include(d => d.Department)
                 .Include(e => e.Explanation)
-                .Where(c => c.Department.Name.Equals(RouteData.Values["department"].ToString()))
+                .Where(c => c.Department.Name.Equals(RouteData.Values["department"].ToString())
+                            && c.DateEnd.AddDays(1).Date >= DateTime.Now.Date)
                 .ToListAsync();
 
             var model = new SecTaskModel()
@@ -67,17 +68,22 @@ namespace JournalForSecurity.Controllers
 
         public async Task<IActionResult> EventsAsync()
         {
-            List<CardEvent> items = new List<CardEvent>();
-            var user = await dbContext.Users
-                .FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
-
             ViewBag.Department = RouteData.Values["department"];
 
-            items = await dbContext.CardEvents
+            var items = await dbContext.CardEvents
                 .Include(d => d.Department)
                 .Include(u => u.User)
                 .Where(c => c.Department.Name.Equals(RouteData.Values["department"].ToString()))
+                .OrderByDescending(e => e.Date)
                 .ToListAsync();
+
+            foreach (var item in items)
+            {
+                if (item.AlertResult != null)
+                {
+                    item.Alerts = item.AlertResult.Split("\n").ToList();
+                }
+            }
 
             return View(items);
         }
@@ -129,10 +135,10 @@ namespace JournalForSecurity.Controllers
                     UserId = dbContext.Users.Where(u => u.UserName.Equals(User.Identity.Name)).Select(u => u.Id).FirstOrDefault(),
                     Date = DateTime.Now,
                     TaskType = ENTaskType.JournalStr,
-                    DepartmentId = dbContext.Departments.Where(d => d.Name.Equals(RouteData.Values["department"].ToString())).Select(d => d.Id).FirstOrDefault()
+                    DepartmentId = str.DepartmentId
                 };
 
-                await dbContext.AddAsync(note);
+                await dbContext.ExplanatoryNotes.AddAsync(note);
                 await dbContext.SaveChangesAsync();
 
                 str.ExplanationId = dbContext.ExplanatoryNotes.Where(e => e.TaskName.Equals(note.TaskName)).Select(e => e.Id).FirstOrDefault();
@@ -168,14 +174,14 @@ namespace JournalForSecurity.Controllers
                 ExplanatoryNote note = new ExplanatoryNote()
                 {
                     Explanation = model.Explanation,
-                    TaskName = model.TaskName,
+                    TaskName = model.TaskName + " " + DateTime.Now.ToString(),
                     UserId = dbContext.Users.Where(u => u.UserName.Equals(User.Identity.Name)).Select(u => u.Id).FirstOrDefault(),
                     Date = DateTime.Now,
                     TaskType = ENTaskType.Task,
-                    DepartmentId = dbContext.Departments.Where(d => d.Name.Equals(RouteData.Values["department"])).Select(d => d.Id).FirstOrDefault()
+                    DepartmentId = card.DepartmentId
                 };
 
-                await dbContext.AddAsync(note);
+                await dbContext.ExplanatoryNotes.AddAsync(note);
                 await dbContext.SaveChangesAsync();
 
                 card.ExplanationId = dbContext.ExplanatoryNotes.Where(e => e.TaskName.Equals(note.TaskName)).Select(e => e.Id).FirstOrDefault();
@@ -209,6 +215,7 @@ namespace JournalForSecurity.Controllers
                 var card = await dbContext.CardTasks.FirstOrDefaultAsync(c => c.Id == model.CardTaskId);
                 card.Answer = model.Answer;
                 card.State = true;
+                card.RealDate = DateTime.Now;
 
                 dbContext.SaveChanges();
 
@@ -231,6 +238,43 @@ namespace JournalForSecurity.Controllers
             }
 
             return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddAlertToEventAsync(int id, string alertResult)
+        {
+            var cEvent = await dbContext.CardEvents.FirstOrDefaultAsync(e => e.Id.Equals(id));
+
+            if(!cEvent.IsAlertResult)
+            {
+                cEvent.IsAlertResult = true;
+                cEvent.AlertResult += "Происшествие - " + alertResult;
+            }
+            else
+            {
+                cEvent.AlertResult += "\n" + "Происшествие - " + alertResult;
+            }
+
+            dbContext.CardEvents.Update(cEvent);
+            await dbContext.SaveChangesAsync();
+
+            var url = RedirectToAction("Events");
+            url.RouteValues = new RouteValueDictionary();
+            var result = url.RouteValues.TryAdd("department", RouteData.Values["department"]);
+            if (!result)
+            {
+                ViewBag.Department = RouteData.Values["department"];
+                var items = await dbContext.CardEvents
+                        .Include(d => d.Department)
+                        .Include(u => u.User)
+                        .Where(c => c.Department.Name.Equals(RouteData.Values["department"].ToString()))
+                        .ToListAsync();
+                ModelState.AddModelError("", "Ошибка переадресовки");
+                ViewBag.Department = RouteData.Values["department"];
+                return View("Events", items);
+            }
+
+            return url;
         }
 
     }

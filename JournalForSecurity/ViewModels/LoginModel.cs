@@ -17,8 +17,5 @@ namespace JournalForSecurity.ViewModels
         [DataType(DataType.Password)]
         [Display(Name = "Пароль")]
         public string Password { get; set; }
-
-        [Display(Name = "Отдел")]
-        public string Department { get; set; }
     }
 }

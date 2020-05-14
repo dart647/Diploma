@@ -27,7 +27,6 @@ namespace JournalForSecurity.Models
     public enum ENTaskType
     {
         Task,
-        Event,
         JournalStr
     }
 }

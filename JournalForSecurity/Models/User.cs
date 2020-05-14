@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,7 +21,20 @@ namespace JournalForSecurity.Models
 
         [Display(Name = "День рождения")]
         [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = true)]
+        [DataType(DataType.Date, ErrorMessage = "Некоректная дата")]
         public DateTime Birthday { get; set; }
+
+        [Display(Name = "Email")]
+        [DataType(DataType.EmailAddress)]
+        public override string Email { get => base.Email; set => base.Email = value; }
+
+        [Display(Name = "Телефон")]
+        [DataType(DataType.PhoneNumber)]
+        [StringLength(11, ErrorMessage = "Телефон должен содержать 11 цифр", MinimumLength = 11)]
+        [RegularExpression(@"8[0-9]{10}", ErrorMessage = "телефон должен соответствовать шаблону 8xxxxxxxxxx")]
+        public override string PhoneNumber { get => base.PhoneNumber; set => base.PhoneNumber = value; }
+
+        public bool isDismissed { get; set; }
 
         public List<CardEvent> CardEvents { get; set; }
 
@@ -34,6 +48,8 @@ namespace JournalForSecurity.Models
             CardTasks = new List<CardTask>();
             ExplanatoryNotes = new List<ExplanatoryNote>();
         }
+
+
     }
 
     public enum Roles

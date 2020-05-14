@@ -5,7 +5,7 @@
 }
 
 <h1>Задачи</h1>
-<a class="btn" asp-action="CreateTask" asp-route-department="@ViewBag.Department">Создать задачу</a>
+<a class="btn" asp-action="CreateTask">Создать задачу</a>
 <table class="table">
     <thead>
         <tr>
@@ -122,14 +122,14 @@
                         }
                     }
 
-                    @if (!item.State && item.DateEnd > DateTime.Now && item.User.UserName.Equals(User.Identity.Name))
+                    @if(!item.State && item.DateEnd > DateTime.Now && item.User.UserName.Equals(User.Identity.Name))
                     {
-                        <a class="btn btn-outline-info" asp-action="EditTask" asp-route-id="@item.Id" asp-route-department="@ViewBag.Department">Изменить</a>
+                        <a class="btn btn-outline-info" asp-action="EditTask" asp-route-id="@item.Id">Изменить</a>
                     }
 
                     @if (!item.State && item.DateBegin > DateTime.Now && item.User.UserName.Equals(User.Identity.Name))
                     {
-                        <form asp-action="DeleteTask" asp-route-department="@ViewBag.Department" method="post">
+                        <form asp-action="DeleteTask" method="post">
                             <input type="hidden" name="id" value="@item.Id" />
                             <input type="submit" class="btn btn-outline-danger" value="Удалить" />
                         </form>

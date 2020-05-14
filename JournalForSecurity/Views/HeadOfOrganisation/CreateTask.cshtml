@@ -1,16 +1,16 @@
-﻿@model JournalForSecurity.Models.CardEvent
+﻿@model JournalForSecurity.Models.CardTask
 
 @{
-    ViewData["Title"] = "Создание события";
+    ViewData["Title"] = "Создать здачу";
 }
 
-<h1>Создание события</h1>
+<h1>Создание задачи</h1>
 
 <h4>Форма для заполнения</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="CreateEvent">
+        <form asp-action="CreateTask">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
@@ -19,8 +19,18 @@
             </div>
             <div class="form-group">
                 <label asp-for="Desc" class="control-label"></label>
-                <textarea rows="5" asp-for="Desc" class="form-control"></textarea>
+                <textarea asp-for="Desc" class="form-control"></textarea>
                 <span asp-validation-for="Desc" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DateBegin" class="control-label"></label>
+                <input asp-for="DateBegin" class="form-control" />
+                <span asp-validation-for="DateBegin" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DateEnd" class="control-label"></label>
+                <input asp-for="DateEnd" class="form-control" />
+                <span asp-validation-for="DateEnd" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Department" class="control-label"></label>

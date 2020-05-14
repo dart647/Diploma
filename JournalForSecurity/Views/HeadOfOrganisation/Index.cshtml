@@ -10,9 +10,6 @@
     <nav class="navbar navbar-expand navbar-brand navbar-light">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="nav-link" asp-action="Index">Все</a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link" asp-action="Index" asp-route-mode="journal">Обходы</a>
             </li>
             <li class="nav-item">
@@ -25,160 +22,312 @@
     </nav>
 </div>
 <div>
-    <table class="table table-bordered table-striped">
-        <thead>
-            <tr>
-                <th>
-                    Название
-                </th>
-                <th>
-                    Выполнение
-                </th>
-                <th>
-                    Объяснительные
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.ReportModel.Journals)
+    @switch (ViewBag.Mode)
+    {
+        case "journal":
             {
-                <tr>
-                    <td>
-                        @String.Format($"Обход с {item.DateBegin} по {item.DateEnd}")
-                    </td>
-                    <td>
-                        @if (item.Status)
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>
+                                Территория
+                            </th>
+                            <th>
+                                Дата и время начала обхода
+                            </th>
+                            <th>
+                                Дата и время конца обхода
+                            </th>
+                            <th>
+                                Фактические дата и время проставление отметки
+                            </th>
+                            <th>
+                                Выполнение
+                            </th>
+                            <th>
+                                Объяснительные
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.ReportModel.Journals)
                         {
-                            <p>Выполнено</p>
-                        }
-                        else if (DateTime.Now < item.DateEnd)
-                        {
-                            <p>Выполняется/Ожидается</p>
-                        }
-                        else
-                        {
-                            <p>Не выполнено</p>
-                        }
-                    </td>
-                    <td>
-                        @if (item.Explanation != null)
-                        {
-                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#expalationNote-@item.Id">
-                                Просмотреть объяснение
-                            </button>
+                            <tr>
+                                <td>
+                                    @item.Department.Name
+                                </td>
+                                <td>
+                                    @item.DateBegin
+                                </td>
+                                <td>
+                                    @item.DateEnd
+                                </td>
+                                <td>
+                                    @if (item.RealDate != DateTime.MinValue)
+                                    {
+                                        <p>@item.RealDate</p>
+                                    }
+                                </td>
+                                <td>
+                                    @if (item.Status)
+                                    {
+                                        <p>Выполнено</p>
+                                    }
+                                    else if (DateTime.Now < item.DateEnd)
+                                    {
+                                        <p>Выполняется/Ожидается</p>
+                                    }
+                                    else
+                                    {
+                                        <p>Не выполнено</p>
+                                    }
+                                </td>
+                                <td>
+                                    @if (item.Explanation != null)
+                                    {
+                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#expalationNote-@item.Id">
+                                            Просмотреть объяснение
+                                        </button>
 
-                            <!-- Modal -->
-                            <div class="modal fade" id="expalationNote-@item.Id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">Пояснительная записка</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="form-group">
-                                                <label class="control-label" for="userFio">От:</label>
-                                                <p class="form-control" id="userFio">@String.Format($"{item.Explanation.User.SecondName} {item.Explanation.User.FirstName} {item.Explanation.User.ThirdName}")</p>
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="expalationNote-@item.Id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLabel">Пояснительная записка</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="form-group">
+                                                            <label class="control-label" for="userFio">От:</label>
+                                                            <p class="form-control" id="userFio">@String.Format($"{item.Explanation.User.SecondName} {item.Explanation.User.FirstName} {item.Explanation.User.ThirdName}")</p>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="name">Наименование задачи</label>
+                                                            <p class="form-control" id="name">@item.Explanation.TaskName</p>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="explanation" class="control-label">Объяснительная</label>
+                                                            <textarea class="form-control border" id="explanation" readonly>@item.Explanation.Explanation</textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="form-group">
-                                                <label for="name">Наименование задачи</label>
-                                                <p class="form-control" id="name">@item.Explanation.TaskName</p>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="explanation" class="control-label">Объяснительная</label>
-                                                <textarea class="form-control border" id="explanation" readonly>@item.Explanation.Explanation</textarea>
-                                            </div>
                                         </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                                    }
+                                </td>
+                            </tr>
                         }
-                    </td>
-                </tr>
+                    </tbody>
+                </table>
+                break;
             }
-            @foreach (var item in Model.ReportModel.Tasks)
+        case "tasks":
             {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(i => item.Name)
-                    </td>
-                    <td>
-                        @if (item.State)
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>
+                                Наименование задачи
+                            </th>
+                            <th>
+                                Территория
+                            </th>
+                            <th>
+                                Дата и время начала задачи
+                            </th>
+                            <th>
+                                Дата и время конца задачи
+                            </th>
+                            <th>
+                                Фактические дата и время проставление отметки
+                            </th>
+                            <th>
+                                ФИО
+                            </th>
+                            <th>
+                                Статус
+                            </th>
+                            <th>
+                                Объяснительная
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.ReportModel.Tasks)
                         {
-                            <p>Выполнено</p>
-                        }
-                        else if (DateTime.Now < item.DateEnd)
-                        {
-                            <p>Выполняется/Ожидается</p>
-                        }
-                        else
-                        {
-                            <p>Не выполнено</p>
-                        }
-                    </td>
-                    <td>
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(i => item.Name)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(i => item.Department.Name)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(i => item.DateBegin)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(i => item.DateEnd)
+                                </td>
+                                <td>
+                                    @if (item.RealDate != DateTime.MinValue)
+                                    {
+                                        Html.DisplayFor(i => item.RealDate);
+                                    }
+                                </td>
+                                <td>
+                                    @String.Format($"{item.User.FirstName} {item.User.SecondName} {item.User.ThirdName}")
+                                </td>
+                                <td>
+                                    @if (item.State)
+                                    {
+                                        <p>Выполнено</p>
+                                    }
+                                    else if (DateTime.Now < item.DateEnd)
+                                    {
+                                        <p>Выполняется/Ожидается</p>
+                                    }
+                                    else
+                                    {
+                                        <p>Не выполнено</p>
+                                    }
+                                </td>
+                                <td>
 
-                        @if (item.Explanation != null)
-                        {
-                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#expalationNote">
-                                Просмотреть объяснительную
-                            </button>
+                                    @if (item.Explanation != null)
+                                    {
+                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#expalationNote-@item.Id">
+                                            Просмотреть объяснительную
+                                        </button>
 
-                            <!-- Modal -->
-                            <div class="modal fade" id="expalationNote" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">Пояснительная записка</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="form-group">
-                                                <label class="control-label" for="userFio">От:</label>
-                                                <p class="form-control" id="userFio">@String.Format($"{item.Explanation.User.SecondName} {item.Explanation.User.FirstName} {item.Explanation.User.ThirdName}")</p>
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="expalationNote-@item.Id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLabel">Пояснительная записка</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="form-group">
+                                                            <label class="control-label" for="userFio">От:</label>
+                                                            <p class="form-control" id="userFio">@String.Format($"{item.Explanation.User.SecondName} {item.Explanation.User.FirstName} {item.Explanation.User.ThirdName}")</p>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="name">Наименование задачи</label>
+                                                            <p class="form-control" id="name">@item.Explanation.TaskName</p>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="explanation" class="control-label">Объяснительная</label>
+                                                            <textarea class="form-control border" id="explanation" readonly>@item.Explanation.Explanation</textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="form-group">
-                                                <label for="name">Наименование задачи</label>
-                                                <p class="form-control" id="name">@item.Explanation.TaskName</p>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="explanation" class="control-label">Объяснительная</label>
-                                                <textarea class="form-control border" id="explanation" readonly>@item.Explanation.Explanation</textarea>
-                                            </div>
                                         </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                                    }
+                                </td>
+                            </tr>
                         }
-                    </td>
-                </tr>
+                    </tbody>
+                </table>
+                break;
             }
-            @foreach (var item in Model.ReportModel.Events)
+        case "events":
             {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(i => item.Name)
-                    </td>
-                    <td>
-                        @*В разработке*@
-                    </td>
-                    <td>
-                        @*В разработке*@
-                    </td>
-                </tr>
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>
+                                Наименование события
+                            </th>
+                            <th>
+                                Территория
+                            </th>
+                            <th>
+                                Дата и время создания события
+                            </th>
+                            <th>
+                                ФИО
+                            </th>
+                            <th>
+                                Происшествия
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.ReportModel.Events)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(i => item.Name)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(i => item.Department.Name)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(i => item.Date)
+                                </td>
+                                <td>
+                                    @String.Format($"{item.User.FirstName} {item.User.SecondName} {item.User.ThirdName}")
+                                </td>
+                                <td>
+                                    @if (item.IsAlertResult)
+                                    {
+                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#alert-@item.Id">
+                                            Происшествия
+                                        </button>
+
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="alert-@item.Id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLabel">Происшествия</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <form>
+                                                        <div class="modal-body">
+                                                            <div>
+                                                                <label class="form-control">Произошедшие проишествия</label>
+                                                                @foreach (var alert in item.Alerts)
+                                                                {
+                                                                    <textarea rows="6" readonly class="form-control">@alert</textarea>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <p>Происшествий нет</p>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                break;
             }
-        </tbody>
-    </table>
+    }
 
     <div class="pagination justify-content-center">
         @if (Model.HasPreviousPage)

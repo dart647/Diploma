@@ -49,11 +49,15 @@ namespace JournalForSecurity.Controllers
         {
             if (ModelState.IsValid)
             {
+                var user = await UserManager.FindByNameAsync(model.Login);
+                if (user.isDismissed)
+                {
+                    ModelState.AddModelError("", "Вы были уволены, вход невозможен");
+                    return View(model);
+                }
                 var result = await SignInManager.PasswordSignInAsync(model.Login, model.Password, false, false);
                 if (result.Succeeded)
                 {
-                    var user = await UserManager.FindByNameAsync(model.Login);
-
                     IEnumerable<string> roles = await UserManager.GetRolesAsync(user);
                     if (await UserManager.IsInRoleAsync(user, Roles.Security.ToString()))
                     {
@@ -74,8 +78,6 @@ namespace JournalForSecurity.Controllers
             {
                 ModelState.AddModelError("", "Некорректные логин и(или) пароль");
             }
-            SelectList selectItem = await departmentService.GetDepartmentsNamesToSelectListAsync();
-            ViewBag.Departments = selectItem;
             return View(model);
         }
 

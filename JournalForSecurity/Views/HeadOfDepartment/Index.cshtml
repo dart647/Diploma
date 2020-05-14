@@ -113,6 +113,14 @@
                         </div>
                     }
                 }
+
+                @if (!item.Status && item.DateBegin > DateTime.Now)
+                {
+                    <form asp-action="DeleteRound" asp-route-department="@ViewBag.Department" method="post">
+                        <input type="hidden" name="id" value="@item.Id" />
+                        <input type="submit" class="btn btn-outline-danger" value="Удалить" />
+                    </form>
+                }
             </td>
         </tr>
         }

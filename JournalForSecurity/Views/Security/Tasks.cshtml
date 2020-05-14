@@ -99,7 +99,7 @@
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
-                                        <form asp-action="Tasks">                                    
+                                        <form asp-action="Tasks" asp-route-department="@ViewBag.Department">                                    
                                             <div class="modal-body">
                                                 <div class="form-group">
                                                     <label class="control-label" for="userFio">От:</label>
@@ -142,7 +142,7 @@
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
-                                        <form asp-action="WriteExplanatoryNoteToTask">
+                                        <form asp-action="WriteExplanatoryNoteToTask" asp-route-department="@ViewBag.Department">
                                             <div class="modal-body">
                                                 <div class="form-group">
                                                     <label class="control-label" for="userFio">От:</label>

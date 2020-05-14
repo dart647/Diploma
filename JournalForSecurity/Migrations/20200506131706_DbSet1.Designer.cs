@@ -4,14 +4,16 @@ using JournalForSecurity.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace JournalForSecurity.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200506131706_DbSet1")]
+    partial class DbSet1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -26,9 +28,6 @@ namespace JournalForSecurity.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("AlertResult")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
@@ -37,8 +36,10 @@ namespace JournalForSecurity.Migrations
 
                     b.Property<string>("Desc")
                         .IsRequired()
-                        .HasColumnType("nvarchar(200)")
-                        .HasMaxLength(200);
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ExplanatoryId")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsAlertResult")
                         .HasColumnType("bit");
@@ -53,6 +54,8 @@ namespace JournalForSecurity.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("DepartmentId");
+
+                    b.HasIndex("ExplanatoryId");
 
                     b.HasIndex("UserId");
 
@@ -88,9 +91,6 @@ namespace JournalForSecurity.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("RealDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<bool>("State")
                         .HasColumnType("bit");
@@ -238,8 +238,7 @@ namespace JournalForSecurity.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(11)")
-                        .HasMaxLength(11);
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
@@ -412,6 +411,10 @@ namespace JournalForSecurity.Migrations
                     b.HasOne("JournalForSecurity.Models.Department", "Department")
                         .WithMany("CardEvents")
                         .HasForeignKey("DepartmentId");
+
+                    b.HasOne("JournalForSecurity.Models.ExplanatoryNote", "Explanatory")
+                        .WithMany()
+                        .HasForeignKey("ExplanatoryId");
 
                     b.HasOne("JournalForSecurity.Models.User", "User")
                         .WithMany("CardEvents")

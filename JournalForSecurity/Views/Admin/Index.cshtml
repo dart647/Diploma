@@ -1,40 +1,56 @@
-﻿@model IEnumerable<User>
+﻿@model UsersModel
 
 @{
     ViewData["Title"] = "Панель админа";
 }
 
-    <h1>Панель админинстратора</h1>
+<h1>Панель админинстратора</h1>
 
 <p>
     <a asp-action="Register">Создать нового пользователя</a>
 </p>
+
+<div asp-validation-summary="ModelOnly"></div>
+
+<div class="btn-block">
+    <nav class="navbar navbar-expand navbar-brand navbar-light">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" asp-action="Index">Работающие</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-action="Index" asp-route-isDismissed="@true">Уволенные</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
 <table class="table table-striped">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.FirstName)
+                Имя
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.SecondName)
+                Фамилия
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ThirdName)
+                Отчество
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Email)
+                Email
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Birthday)
+                Дата рожденич
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PhoneNumber)
+                Номер телефона
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in Model.Users)
         {
             <tr>
                 <td>
@@ -56,13 +72,28 @@
                     @Html.DisplayFor(modelItem => item.PhoneNumber)
                 </td>
                 <td>
-                    <button class="btn btn-outline-info" type="button" data-toggle="collapse" data-target=@String.Format("#ParamsButtons{0}", item.UserName) aria-expanded="false" aria-controls=@String.Format("ParamsButtons{0}", item.UserName)>
-                        Настройки
-                    </button>
-                    <div class="collapse" id=@String.Format("ParamsButtons{0}", item.UserName)>
-                        <a class="btn" asp-action="Edit" asp-route-id="@item.Id">Редактировать</a>
-                        <a class="btn" asp-action="Delete" asp-route-id="@item.Id">Удалить</a>
-                    </div>
+                    @if (!item.isDismissed)
+                    {
+                        <button class="btn btn-outline-info" type="button" data-toggle="collapse" data-target=@String.Format("#ParamsButtons{0}", item.UserName) aria-expanded="false" aria-controls=@String.Format("ParamsButtons{0}", item.UserName)>
+                            Настройки
+                        </button>
+                        <div class="collapse" id=@String.Format("ParamsButtons{0}", item.UserName)>
+                            <a class="btn" asp-action="EditUser" asp-route-id="@item.Id">Редактировать</a>
+                            <a class="btn" asp-action="EditPassword" asp-route-id="@item.Id">Изменить пароль</a>
+                            <form asp-action="Index" asp-controller="Admin" method="post">
+                                <input type="hidden" asp-for="@Model.dUserId" value="@item.Id" />
+                                <input type="submit" class="btn" value="Удалить" />
+                            </form>
+                        </div>
+                    }
+                    else
+                    {
+                        <form asp-action="Index" asp-controller="Admin" method="post">
+                            <input type="hidden" asp-for="@Model.dUserId" value="@item.Id" />
+                            <input type="submit" class="btn" value="Восстановить" />
+                        </form>
+                    }
+
                 </td>
             </tr>
         }

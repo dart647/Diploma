@@ -74,39 +74,16 @@ namespace JournalForSecurity.ViewModels
                             .Take(pageSize)
                             .ToList();
 
+                        foreach (var item in Events)
+                        {
+                            if (item.AlertResult != null)
+                            {
+                                item.Alerts = item.AlertResult.Split("\n").ToList();
+                            }
+                        }
+
                         count = dbContext.CardEvents.Count();
                         break;
-                    }
-                default:
-                    {
-                        Journals = dbContext.Journals
-                            .Include(j => j.Department)
-                            .Include(e => e.Explanation)
-                            .ThenInclude(u => u.User)
-                            .OrderByDescending(j => j.DateBegin)
-                            .Skip((page - 1) * pageSize)
-                            .Take(pageSize)
-                            .ToList();
-                        Tasks = dbContext.CardTasks
-                            .Include(u => u.User)
-                            .Include(d => d.Department)
-                            .Include(e => e.Explanation)
-                            .ThenInclude(u => u.User)
-                            .OrderByDescending(j => j.DateBegin)
-                            .Skip((page - 1) * pageSize)
-                            .Take(pageSize)
-                            .ToList();
-                        Events = dbContext.CardEvents
-                            .Include(u => u.User)
-                            .Include(e => e.Department)
-                            .OrderByDescending(j => j.Date)
-                            .Skip((page - 1) * pageSize)
-                            .Take(pageSize)
-                            .ToList();
-
-                        count = Math.Max(Math.Max(dbContext.Journals.Count(), dbContext.CardTasks.Count()), dbContext.CardEvents.Count());
-
-                        return new ReportPages(this, count, page, pageSize);
                     }
             }
 
