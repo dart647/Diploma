@@ -7,62 +7,38 @@
 <h1>Задачи</h1>
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                Название
-            </th>
-            <th>
-                ФИО
-            </th>
-            <th>
-                Отдел
-            </th>
-            <th>
-                Описание
-            </th>
-            <th>
-                Ответ
-            </th>
-            <th>
-                Время начала
-            </th>
-            <th>
-                Время конца
-            </th>
-            <th>
-                Состояние
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.cardTasks)
-        {
-            <tr>
-                <td>
+<hr />
+
+<div class="row">
+    @foreach (var item in Model.cardTasks)
+    {
+        <div class="col-4">
+            <div class="card">
+                <div class="card-header text-center">
                     @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @String.Format("{0} {1} {2}", item.User.FirstName, item.User.SecondName, item.User.ThirdName)
-                </td>
-                <td>
+                </div>
+                <div class="card-header text-center">
+                    @String.Format($"{item.User.FirstName} {item.User.SecondName} {item.User.ThirdName}")
+                </div>
+                <div class="card-header text-center">
+                    @String.Format($"{item.DateBegin} - {item.DateEnd}")
+                </div>
+                <div class="card-body text-center">
                     @Html.DisplayFor(modelItem => item.Department.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Desc)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Answer)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DateBegin)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DateEnd)
-                </td>
-                <td>
+                    <div class="card-text">
+                        @Html.DisplayFor(modelItem => item.Desc)
+                    </div>
+                </div>
+                @if (!String.IsNullOrEmpty(item.Answer))
+                {
+                    <hr />
+                    <div class="card-body text-center">
+                        <div class="card-text">
+                            @Html.DisplayFor(modelItem => item.Answer)
+                        </div>
+                    </div>
+                }
+                <div class="card-footer text-center">
                     @{
                         if (item.State)
                         {
@@ -81,8 +57,8 @@
                             <p>Не выполнено</p>
                         }
                     }
-                </td>
-                <td>
+                </div>
+                <div class="card-footer text-center">
                     @{ if (!item.State && DateTime.Now < item.DateEnd && DateTime.Now > item.DateBegin)
                         {
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#done-@item.Id">
@@ -99,7 +75,7 @@
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
-                                        <form asp-action="Tasks" asp-route-department="@ViewBag.Department">                                    
+                                        <form asp-action="Tasks" asp-route-department="@ViewBag.Department">
                                             <div class="modal-body">
                                                 <div class="form-group">
                                                     <label class="control-label" for="userFio">От:</label>
@@ -119,14 +95,14 @@
                                                 <input type="submit" class="btn btn-primary" value="Отправить" />
                                                 <input type="hidden" asp-for="CardTaskId" value="@item.Id" />
                                             </div>
-                                            <input type="hidden" asp-for="Explanation" value="0"/>
+                                            <input type="hidden" asp-for="Explanation" value="0" />
                                             <input type="hidden" asp-for="cardTasks" value="@Model.cardTasks" />
                                         </form>
                                     </div>
                                 </div>
                             </div>
                         }
-                        if(!item.State && DateTime.Now > item.DateEnd && item.Explanation == null)
+                        if (!item.State && DateTime.Now > item.DateEnd && item.Explanation == null)
                         {
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#expalationNote-@item.Id">
                                 Написать объяснительную
@@ -170,11 +146,12 @@
                             </div>
                         }
                     }
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+                </div>
+            </div>
+            <br />
+        </div>
+    }
+</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

@@ -51,7 +51,7 @@ namespace JournalForSecurity.ViewModels
                 statistic.TasksCount = dbContext.CardTasks.Include(d => d.Department).Where(d => d.Department.Equals(department)).Count();
                 statistic.TasksSuccessCount = dbContext.CardTasks.Include(d => d.Department).Where(d => d.Department.Equals(department)).Count(t => t.State);
                 statistic.TasksUnsuccessCount = statistic.TasksCount - statistic.TasksSuccessCount;
-                statistic.TasksPercent = statistic.TasksUnsuccessCount / statistic.TasksCount * 100;
+                statistic.TasksPercent = statistic.TasksSuccessCount / statistic.TasksCount * 100;
                 statistic.TasksExplanationCount = dbContext.ExplanatoryNotes.Include(d => d.Department).Where(d => d.Department.Equals(department)).Count(en => !en.TaskName.Contains("Обход"));
                 statistic.EventsCount = dbContext.CardEvents.Include(d => d.Department).Where(d => d.Department.Equals(department)).Count();
             }
@@ -65,7 +65,7 @@ namespace JournalForSecurity.ViewModels
                 statistic.TasksCount = dbContext.CardTasks.Count();
                 statistic.TasksSuccessCount = dbContext.CardTasks.Count(t => t.State);
                 statistic.TasksUnsuccessCount = statistic.TasksCount - statistic.TasksSuccessCount;
-                statistic.TasksPercent = statistic.TasksUnsuccessCount / statistic.TasksCount * 100;
+                statistic.TasksPercent = statistic.TasksSuccessCount / statistic.TasksCount * 100;
                 statistic.TasksExplanationCount = dbContext.ExplanatoryNotes.Count(en => !en.TaskName.Contains("Обход"));
                 statistic.EventsCount = dbContext.CardEvents.Count();
             }

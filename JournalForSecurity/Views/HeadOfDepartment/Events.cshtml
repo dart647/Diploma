@@ -6,44 +6,26 @@
 
 <h1>События</h1>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Desc)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Date)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsAlertResult)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Department)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
+<hr />
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col">
+            <div class="card">
+                <div class="card-header text-center">
                     @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Desc)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Date)
-                </td>
-                <td>
+                </div>
+                <div class="card-header text-center">
+                    @String.Format($"{item.User.FirstName} {item.User.SecondName} {item.User.ThirdName}")
+                </div>
+                <div class="card-body text-center">
+                    @Html.DisplayFor(modelItem => item.Department.Name)
+                    <div class="card-text">
+                        @Html.DisplayFor(modelItem => item.Desc)
+                    </div>
+                </div>
+                <div class="card-footer text-center">
                     @if (item.IsAlertResult)
                     {
                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#alert-@item.Id">
@@ -76,20 +58,15 @@
                                     </form>
                                 </div>
                             </div>
+                            <br />
                         </div>
                     }
                     else
                     {
                         <p>Происшествий нет</p>
                     }
-                </td>
-                <td>
-                    @String.Format($"{item.User.FirstName} {item.User.SecondName} {item.User.ThirdName}")
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Department.Id)
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+                </div>
+            </div>
+        </div>
+    }
+</div>

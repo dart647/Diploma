@@ -4,14 +4,17 @@
 }
 
 <h1>SwitchDepartment</h1>
+<hr />
 <div class="row flex-sm-row">
     @foreach (var item in Model)
     {
     <div class="col-sm-4">
-        <a class="btn btn-outline-dark" asp-action="Index" asp-controller="@ViewBag.Role" asp-route-department="@item.Name"x>
-            <label for="dImage" >@item.Name</label>
-            <img src="images/@item.Name" />
-        </a>
+        <div class="card">
+            <a class="btn btn-outline-dark" asp-action="Index" asp-controller="@ViewBag.Role" asp-route-department="@item.Name" x>
+                @item.Name
+            </a>
+        </div>
+        <br />
     </div>
     }
 </div>

@@ -6,62 +6,38 @@
 
 <h1>Задачи</h1>
 <a class="btn" asp-action="CreateTask" asp-route-department="@ViewBag.Department">Создать задачу</a>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                Наименование
-            </th>
-            <th>
-                ФИО
-            </th>
-            <th>
-                Отдел
-            </th>
-            <th>
-                Описание
-            </th>
-            <th>
-                Ответ
-            </th>
-            <th>
-                Время начала
-            </th>
-            <th>
-                Время конца
-            </th>
-            <th>
-                Состояние
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.cardTasks)
-        {
-            <tr>
-                <td>
+<hr />
+
+<div class="row">
+    @foreach (var item in Model.cardTasks)
+    {
+        <div class="col-4">
+            <div class="card">
+                <div class="card-header text-center">
                     @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @String.Format("{0} {1} {2}", item.User.FirstName, item.User.SecondName, item.User.ThirdName)
-                </td>
-                <td>
+                </div>
+                <div class="card-header text-center">
+                    @String.Format($"{item.User.FirstName} {item.User.SecondName} {item.User.ThirdName}")
+                </div>
+                <div class="card-header text-center">
+                    @String.Format($"{item.DateBegin} - {item.DateEnd}")
+                </div>
+                <div class="card-body text-center">
                     @Html.DisplayFor(modelItem => item.Department.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Desc)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Answer)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DateBegin)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DateEnd)
-                </td>
-                <td>
+                    <div class="card-text">
+                        @Html.DisplayFor(modelItem => item.Desc)
+                    </div>
+                </div>
+                @if (!String.IsNullOrEmpty(item.Answer))
+                {
+                    <hr />
+                    <div class="card-body text-center">
+                        <div class="card-text">
+                            @Html.DisplayFor(modelItem => item.Answer)
+                        </div>
+                    </div>
+                }
+                <div class="card-footer text-center">
                     @{
                         if (item.State)
                         {
@@ -80,8 +56,8 @@
                             <p>Не выполнено</p>
                         }
                     }
-                </td>
-                <td>
+                </div>
+                <div class="card-footer text-center">
                     @{
                         if (item.Explanation != null)
                         {
@@ -122,20 +98,21 @@
                         }
                     }
 
-                    @if (!item.State && item.DateEnd > DateTime.Now && item.User.UserName.Equals(User.Identity.Name))
-                    {
-                        <a class="btn btn-outline-info" asp-action="EditTask" asp-route-id="@item.Id" asp-route-department="@ViewBag.Department">Изменить</a>
-                    }
+                    <form asp-action="DeleteTask" asp-route-department="@ViewBag.Department" method="post">
+                        @if (!item.State && item.DateEnd > DateTime.Now && item.User.UserName.Equals(User.Identity.Name))
+                        {
+                            <a class="btn btn-primary" asp-action="EditTask" asp-route-id="@item.Id" asp-route-department="@ViewBag.Department">Изменить</a>
+                        }
 
-                    @if (!item.State && item.DateBegin > DateTime.Now && item.User.UserName.Equals(User.Identity.Name))
-                    {
-                        <form asp-action="DeleteTask" asp-route-department="@ViewBag.Department" method="post">
+                        @if (!item.State && item.DateBegin > DateTime.Now && item.User.UserName.Equals(User.Identity.Name))
+                        {
                             <input type="hidden" name="id" value="@item.Id" />
-                            <input type="submit" class="btn btn-outline-danger" value="Удалить" />
-                        </form>
-                    }
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+                            <input type="submit" class="btn btn-danger" value="Удалить" />
+                        }
+                    </form>
+                </div>
+            </div>
+            <br />
+        </div>
+    }
+</div>
